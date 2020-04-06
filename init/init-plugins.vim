@@ -668,7 +668,6 @@ let g:quickui_show_tip = 1
 " 定义按两次空格就打开上面的目录
 noremap <space><space> :call quickui#menu#open()<cr>
 
-
 " When writing a buffer (no delay).
 call neomake#configure#automake('w')
 " When writing a buffer (no delay), and on normal mode changes (after 750ms)
