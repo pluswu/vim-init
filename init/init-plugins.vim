@@ -15,7 +15,8 @@
 "----------------------------------------------------------------------
 if !exists('g:bundle_group')
 	let g:bundle_group = ['basic', 'tags', 'enhanced', 'filetypes', 'textobj']
-	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'ale', 'echodoc']
+	"let g:bundle_group += ['tags', 'airline', 'nerdtree', 'ale', 'echodoc']
+	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'echodoc']
 	let g:bundle_group += ['leaderf']
 endif
 
@@ -341,6 +342,7 @@ if index(g:bundle_group, 'grammer') >= 0
 	map <space>rp <Plug>(grammarous-move-to-previous-error)
 endif
 
+Plug 'neomake/neomake'
 
 "----------------------------------------------------------------------
 " ale：动态语法检查
@@ -549,7 +551,7 @@ let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_complete_in_strings=1
 let g:ycm_key_invoke_completion = '<c-z>'
 set completeopt=menu,menuone,noselect
-
+let g:ycm_confirm_extra_conf = 0
 " noremap <c-z> <NOP>
 
 " 两个字符自动触发语义补全
@@ -666,5 +668,15 @@ let g:quickui_show_tip = 1
 " 定义按两次空格就打开上面的目录
 noremap <space><space> :call quickui#menu#open()<cr>
 
+
+" When writing a buffer (no delay).
+call neomake#configure#automake('w')
+" When writing a buffer (no delay), and on normal mode changes (after 750ms)
+call neomake#configure#automake('nw', 750)
+" When reading a buffer (after 1s), and when writing (no delay).
+call neomake#configure#automake('rw', 1000)
+" Full config: when writing or reading a buffer, and on changes in insert
+" normal mode (after 500ms; no delay when witing).
+call neomake#configure#automake('nrwi', 500)
 
 
