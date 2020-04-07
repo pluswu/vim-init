@@ -121,18 +121,12 @@ if index(g:bundle_group, 'basic') >= 0
 	" Git 支持
 	Plug 'tpope/vim-fugitive'
 
-	" 使用 ALT+E 来选择窗口
-	nmap <m-e> <Plug>(choosewin)
-
 	" 默认不显示 startify
 	let g:startify_disable_at_vimenter = 1
 	let g:startify_session_dir = '~/.vim/session'
 
-	" 使用 <space>ha 清除 errormarker 标注的错误
-	noremap <silent><space>ha :RemoveErrorMarkers<cr>
-
 	" signify 调优
-	let g:signify_vcs_list = ['git', 'svn']
+	let g:signify_vcs_list = ['git', 'svn', 'p4']
 	let g:signify_sign_add               = '+'
 	let g:signify_sign_delete            = '_'
 	let g:signify_sign_delete_first_line = '‾'
@@ -220,7 +214,7 @@ if index(g:bundle_group, 'tags') >= 0
 	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
 	" 使用 universal-ctags 的话需要下面这行，请反注释
-	" let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+	let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
 
 	" 禁止 gutentags 自动链接 gtags 数据库
 	let g:gutentags_auto_add_gtags_cscope = 0
@@ -311,36 +305,25 @@ endif
 if index(g:bundle_group, 'nerdtree') >= 0
 	Plug 'scrooloose/nerdtree', {'on': ['NERDTree', 'NERDTreeFocus', 'NERDTreeToggle', 'NERDTreeCWD', 'NERDTreeFind'] }
 	Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-	"let g:NERDTreeMinimalUI = 1
-	"let g:NERDTreeDirArrows = 1
 	let g:NERDTreeHijackNetrw = 0
-	"noremap <space>nn :NERDTree<cr>
-	"noremap <space>no :NERDTreeFocus<cr>
-	"noremap <space>nm :NERDTreeMirror<cr>
-	noremap <space>nn :NERDTreeToggle<cr>
-	"当目标是文件夹时NERDTree自动打开
-	autocmd vimenter * if !argc()|NERDTree|endif
-	"当NERDTree为剩下的唯一窗口时自动关闭
-	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
 endif
 
 
 "----------------------------------------------------------------------
 " LanguageTool 语法检查
 "----------------------------------------------------------------------
-if index(g:bundle_group, 'grammer') >= 0
-	Plug 'rhysd/vim-grammarous'
-	noremap <space>rg :GrammarousCheck --lang=en-US --no-move-to-first-error --no-preview<cr>
-	map <space>rr <Plug>(grammarous-open-info-window)
-	map <space>rv <Plug>(grammarous-move-to-info-window)
-	map <space>rs <Plug>(grammarous-reset)
-	map <space>rx <Plug>(grammarous-close-info-window)
-	map <space>rm <Plug>(grammarous-remove-error)
-	map <space>rd <Plug>(grammarous-disable-rule)
-	map <space>rn <Plug>(grammarous-move-to-next-error)
-	map <space>rp <Plug>(grammarous-move-to-previous-error)
-endif
+" if index(g:bundle_group, 'grammer') >= 0
+	" Plug 'rhysd/vim-grammarous'
+	" noremap <space>rg :GrammarousCheck --lang=en-US --no-move-to-first-error --no-preview<cr>
+	" map <space>rr <Plug>(grammarous-open-info-window)
+	" map <space>rv <Plug>(grammarous-move-to-info-window)
+	" map <space>rs <Plug>(grammarous-reset)
+	" map <space>rx <Plug>(grammarous-close-info-window)
+	" map <space>rm <Plug>(grammarous-remove-error)
+	" map <space>rd <Plug>(grammarous-disable-rule)
+	" map <space>rn <Plug>(grammarous-move-to-next-error)
+	" map <space>rp <Plug>(grammarous-move-to-previous-error)
+" endif
 
 Plug 'neomake/neomake'
 
@@ -535,6 +518,8 @@ Plug 'skywind3000/vim-terminal-help'
 
 Plug 'scrooloose/nerdcommenter'
 
+Plug 'liwangmj/vim-switchtoinc'
+
 "注释的时候自动加个空格, 强迫症必配
 let g:NERDSpaceDelims=1
 
@@ -561,7 +546,7 @@ let g:ycm_complete_in_strings=1
 let g:ycm_key_invoke_completion = '<c-z>'
 set completeopt=menu,menuone,noselect
 let g:ycm_confirm_extra_conf = 0
-" noremap <c-z> <NOP>
+"noremap <c-z> <NOP>
 
 " 两个字符自动触发语义补全
 let g:ycm_semantic_triggers =  {

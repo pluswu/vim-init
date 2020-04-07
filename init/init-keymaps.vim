@@ -23,6 +23,7 @@ inoremap <c-a> <home>
 inoremap <c-e> <end>
 inoremap <c-d> <del>
 inoremap <c-_> <c-k>
+inoremap jk <ESC>
 
 
 "----------------------------------------------------------------------
@@ -136,9 +137,18 @@ noremap <silent> <leader>bp :bp<cr>
 
 noremap <silent> <leader>tc :tabnew<cr>
 noremap <silent> <leader>tq :tabclose<cr>
-noremap <silent> <leader>tn :tabnext<cr>
 noremap <silent> <leader>tp :tabprev<cr>
 noremap <silent> <leader>to :tabonly<cr>
+
+"tag
+noremap <silent> <leader>n :tnext<cr>
+noremap <silent> <leader>p :tprev<cr>
+
+"nnoremap <leader>jc :YcmCompleter GoToDeclaration<CR>
+"只能是 #include 或已打开的文件
+"nnoremap <leader>jd :YcmCompleter GoToDefinition<CR>
+
+
 
 
 " 左移 tab
@@ -270,6 +280,16 @@ if has('win32') || has('win64')
 	nnoremap <silent> <F8> :AsyncRun -cwd=<root> -mode=4 make run <cr>
 endif
 
+if index(g:bundle_group, 'nerdtree') >= 0
+	noremap <space>nn :NERDTreeToggle<cr>
+endif
+
+if index(g:bundle_group, 'basic') >= 0
+	" 使用 ALT+E 来选择窗口
+	nmap <m-e> <Plug>(choosewine
+
+	noremap <silent><space>ha :RemoveErrorMarkers<cr>
+endif
 
 "----------------------------------------------------------------------
 " F5 运行当前文件：根据文件类型判断方法，并且输出到 quickfix 窗口
