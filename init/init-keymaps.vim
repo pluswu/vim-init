@@ -240,27 +240,29 @@ let g:asyncrun_bell = 1
 nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
 
 " F9 编译 C/C++ 文件
-nnoremap <silent> <F9> :AsyncRun gcc -Wall -O2 "$(VIM_FILEPATH)" -o "$(VIM_FILEDIR)/$(VIM_FILENOEXT)" <cr>
+"nnoremap <silent> <F9> :AsyncRun gcc -Wall -O2 "$(VIM_FILEPATH)" -o "$(VIM_FILEDIR)/$(VIM_FILENOEXT)" <cr>
 
 " F5 运行文件
-nnoremap <silent> <F5> :call ExecuteFile()<cr>
+"nnoremap <silent> <F5> :call ExecuteFile()<cr>
 
 " F7 编译项目
 "nnoremap <silent> <F7> :AsyncRun -cwd=<root> make <cr>
 
 " F8 运行项目
-nnoremap <silent> <F8> :AsyncRun -cwd=<root> -raw make run <cr>
+"nnoremap <silent> <F8> :AsyncRun -cwd=<root> -raw make run <cr>
 
 " F6 测试项目
-nnoremap <silent> <F6> :AsyncRun -cwd=<root> -raw make test <cr>
+"nnoremap <silent> <F6> :AsyncRun -cwd=<root> -raw make test <cr>
 
 " 更新 cmake
 nnoremap <silent> <F7> :AsyncRun -cwd=<root> cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .<cr>
 
+
+" vim终端打开与关闭
 let g:terminal_key = '<m-t>'
 
+" vim终端切换到普通模式
 tnoremap <m-q> <c-\><c-n>
-
 
 
 " Windows 下支持直接打开新 cmd 窗口运行

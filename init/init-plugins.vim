@@ -533,6 +533,11 @@ Plug 'skywind3000/asyncrun.vim'
 
 Plug 'skywind3000/vim-terminal-help'
 
+Plug 'scrooloose/nerdcommenter'
+
+"注释的时候自动加个空格, 强迫症必配
+let g:NERDSpaceDelims=1
+
 "----------------------------------------------------------------------
 " 结束插件安装
 "----------------------------------------------------------------------
