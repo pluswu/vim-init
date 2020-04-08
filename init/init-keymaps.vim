@@ -19,10 +19,10 @@
 "----------------------------------------------------------------------
 " INSERT 模式下使用 EMACS 键位
 "----------------------------------------------------------------------
-inoremap <c-a> <home>
-inoremap <c-e> <end>
-inoremap <c-d> <del>
-inoremap <c-_> <c-k>
+" inoremap <c-a> <home>
+" inoremap <c-e> <end>
+" inoremap <c-d> <del>
+" inoremap <c-_> <c-k>
 inoremap jk <ESC>
 
 
@@ -255,13 +255,13 @@ nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
 " F5 运行文件
 "nnoremap <silent> <F5> :call ExecuteFile()<cr>
 
-" F7 编译项目
-"nnoremap <silent> <F7> :AsyncRun -cwd=<root> make <cr>
+"F5 编译项目
+nnoremap <silent> <F7> :AsyncRun -cwd=<root> make <cr>
 
 " F8 运行项目
 "nnoremap <silent> <F8> :AsyncRun -cwd=<root> -raw make run <cr>
 
-" F6 测试项目
+"F6 rebuild
 "nnoremap <silent> <F6> :AsyncRun -cwd=<root> -raw make test <cr>
 
 " 更新 cmake
@@ -338,7 +338,6 @@ function! ExecuteFile()
 endfunc
 
 
-
 "----------------------------------------------------------------------
 " F2 在项目目录下 Grep 光标下单词，默认 C/C++/Py/Js ，扩展名自己扩充
 " 支持 rg/grep/findstr ，其他类型可以自己扩充
@@ -361,7 +360,6 @@ else
 				\ '<root>' <cr>
 endif
 
-"quick UI
 " 清楚所有目录项目
 call quickui#menu#reset()
 
