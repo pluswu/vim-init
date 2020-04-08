@@ -282,11 +282,12 @@ endif
 
 if index(g:bundle_group, 'nerdtree') >= 0
 	noremap <space>nn :NERDTreeToggle<cr>
+	noremap <space>nc :NERDTree %<cr>
 endif
 
 if index(g:bundle_group, 'basic') >= 0
 	" 使用 ALT+E 来选择窗口
-	nmap <m-e> <Plug>(choosewine
+	nmap <m-e> <Plug>(choosewin)
 
 	noremap <silent><space>ha :RemoveErrorMarkers<cr>
 endif
