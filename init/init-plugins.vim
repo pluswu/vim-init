@@ -120,6 +120,9 @@ if index(g:bundle_group, 'basic') >= 0
 
 	" Git 支持
 	Plug 'tpope/vim-fugitive'
+	
+	" 代码模板
+	Plug 'SirVer/ultisnips'
 
 	" 默认不显示 startify
 	let g:startify_disable_at_vimenter = 1
@@ -343,6 +346,11 @@ if index(g:bundle_group, 'ale') >= 0
 	" 禁用默认 INSERT 模式下改变文字也触发的设置，太频繁外，还会让补全窗闪烁
 	let g:ale_lint_on_text_changed = 'normal'
 	let g:ale_lint_on_insert_leave = 1
+
+	" 开启解析 compile_commands 的功能
+	let g:ale_c_parse_compile_commands = 1
+	" ale 将在工程目录下的 build 和 . 中搜索 compile_commands.json
+	let g:ale_c_build_dir_names = ['build','.']
 
 	" 在 linux/mac 下降低语法检查程序的进程优先级（不要卡到前台进程）
 	if has('win32') == 0 && has('win64') == 0 && has('win32unix') == 0
