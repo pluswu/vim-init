@@ -338,7 +338,7 @@ if index(g:bundle_group, 'ale') >= 0
 
 	" 设定延迟和提示信息
 	let g:ale_completion_delay = 500
-	let g:ale_echo_delay = 20
+	let g:ale_echo_delay = 20pygments_parser.py
 	let g:ale_lint_delay = 500
 	let g:ale_echo_msg_format = '[%linter%] %code: %%s'
 
@@ -442,7 +442,7 @@ if index(g:bundle_group, 'leaderf') >= 0
 		noremap <m-m> :LeaderfTag<cr>
 
 		" 最大历史文件保存 2048 个
-		let g:Lf_MruMaxFiles = 2048
+		let g:Lf_MruMaxFilepygments_parser = 2048
 
 		" ui 定制
 		let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
