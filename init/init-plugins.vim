@@ -15,7 +15,6 @@
 "----------------------------------------------------------------------
 if !exists('g:bundle_group')
 	let g:bundle_group = ['basic', 'tags', 'enhanced', 'filetypes', 'textobj']
-	"let g:bundle_group += ['tags', 'airline', 'nerdtree', 'ale', 'echodoc']
 	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'echodoc']
 	let g:bundle_group += ['leaderf']
 endif
@@ -264,7 +263,7 @@ if index(g:bundle_group, 'filetypes') >= 0
 	Plug 'tbastos/vim-lua', { 'for': 'lua' }
 
 	" C++ 语法高亮增强，支持 11/14/17 标准
-	Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
+	Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cc', 'cpp'] }
 
 	" 额外语法文件
 	Plug 'justinmk/vim-syntax-extra', { 'for': ['c', 'bison', 'flex', 'cpp'] }
@@ -528,6 +527,8 @@ Plug 'scrooloose/nerdcommenter'
 
 Plug 'liwangmj/vim-switchtoinc'
 
+Plug 'luochen1990/rainbow'
+
 "注释的时候自动加个空格, 强迫症必配
 let g:NERDSpaceDelims=1
 
@@ -536,6 +537,19 @@ let g:NERDSpaceDelims=1
 "----------------------------------------------------------------------
 call plug#end()
 
+"rainbow
+let g:rainbow_active = 1
+
+let g:rainbow_load_separately = [
+    \ [ '*' , [['(', ')'], ['\[', '\]'], ['{', '}']] ],
+    \ [ '*.tex' , [['(', ')'], ['\[', '\]']] ],
+    \ [ '*.{cpp, c}' , [['(', ')'], ['\[', '\]'], ['{', '}']] ],
+    \ [ '*.' , [['(', ')'], ['\[', '\]'], ['{', '}']] ],
+    \ [ '*.{html,htm}' , [['(', ')'], ['\[', '\]'], ['{', '}'], ['<\a[^>]*>', '</[^>]*>']] ],
+    \ ]
+
+let g:rainbow_guifgs = ['RoyalBlue3', 'DarkOrange3', 'DarkOrchid3', 'FireBrick']
+let g:rainbow_ctermfgs = ['lightblue', 'lightgreen', 'yellow', 'red', 'magenta']
 
 
 "----------------------------------------------------------------------
