@@ -121,6 +121,8 @@ if has("gui_macvim")
 	inoremap <silent><d-0> <ESC>:tabn 10<cr>
 endif
 
+"退出
+nmap <m-x> :q<cr>
 
 
 "----------------------------------------------------------------------
@@ -136,20 +138,11 @@ noremap <silent> <leader>bp :bp<cr>
 "----------------------------------------------------------------------
 
 noremap <silent> <leader>tc :tabnew<cr>
+noremap <silent> <leader>tw :tab split<cr>
 noremap <silent> <leader>tq :tabclose<cr>
 noremap <silent> <leader>tp :tabprev<cr>
+noremap <silent> <leader>tn :tabnext<cr>
 noremap <silent> <leader>to :tabonly<cr>
-
-"tag
-noremap <silent> <leader>n :tnext<cr>
-noremap <silent> <leader>p :tprev<cr>
-
-"nnoremap <leader>jc :YcmCompleter GoToDeclaration<CR>
-"只能是 #include 或已打开的文件
-"nnoremap <leader>jd :YcmCompleter GoToDefinition<CR>
-
-
-
 
 " 左移 tab
 function! Tab_MoveLeft()
@@ -171,6 +164,10 @@ noremap <silent><leader>tl :call Tab_MoveLeft()<cr>
 noremap <silent><leader>tr :call Tab_MoveRight()<cr>
 noremap <silent><m-left> :call Tab_MoveLeft()<cr>
 noremap <silent><m-right> :call Tab_MoveRight()<cr>
+
+"tag
+noremap <silent> <leader>n :tnext<cr>
+noremap <silent> <leader>p :tprev<cr>
 
 
 "----------------------------------------------------------------------
@@ -266,13 +263,17 @@ nnoremap <silent> <F7> :AsyncRun -cwd=<root> make <cr>
 " 更新 cmake
 nnoremap <silent> <F7> :AsyncRun -cwd=<root> cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .<cr>
 
+" 保存当前文件
+nmap <C-S> :w! <CR>
+
+nmap <leader>sq :wq! <CR>
+
 
 " vim终端打开与关闭
 let g:terminal_key = '<m-t>'
 
 " vim终端切换到普通模式
 tnoremap <m-q> <c-\><c-n>
-
 
 " Windows 下支持直接打开新 cmd 窗口运行
 if has('win32') || has('win64')
@@ -359,34 +360,105 @@ else
 				\ '<root>' <cr>
 endif
 
-" 清楚所有目录项目
-call quickui#menu#reset()
+function! TermExit(code)
+	echom "terminal exit code: ". a:code
+endfunc
+
+let opts = {'w':60, 'h':8, 'callback':'TermExit'}
+let opts.title = 'Terminal Popup'
 
 " 安装一个 File 目录，使用 [名称，命令] 的格式表示各个选项。
 call quickui#menu#install('&File', [
-            \ [ "&New File\tCtrl+n", 'echo 0' ],
-            \ [ "&Open File\t(F3)", 'echo 1' ],
-            \ [ "&Close", 'echo 2' ],
-            \ [ "--", '' ],
-            \ [ "&Save\tCtrl+s", 'echo 3'],
-            \ [ "Save &As", 'echo 4' ],
-            \ [ "Save All", 'echo 5' ],
-            \ [ "--", '' ],
-            \ [ "E&xit\tAlt+x", 'echo 6' ],
+            \ ["&New File", 'new'],
+            \ ["New &Window", 'new'],
+            \ ["Find File Mu\tCtrl+P", 'Leaderf file'],
+            \ ["Find File Recent\tCtrl+N", 'Leaderf mru --regexMode'],
+            \ ["Find File In Buffer\tAlt+N", ''],
+            \ ["--", '' ],
+		    \ ["&Open File", 'call feedkeys(":tabe ")' ],	
+            \ ["&Close", 'close', 'close cur file'],
+            \ ["--", '' ],
+            \ ["Save\tCtrl+s", 'w!', ''],
+            \ ["Save &As", 'call feedkeys(":saveas ")'],
+            \ ["Save All", 'wa', ''],
+            \ ["--", '' ],
+            \ ["E&xit\tAlt+X", 'q'],
+            \ ], 0)
+
+call quickui#menu#install('&Edit', [
+			\ [ '&Terminal Window Toggle\tAlt+T', 'call TerminalToggle()', '' ],
+            \ [ 'Terminal Normal\tAlt+Q', '', '' ],
+            \ [ 'Drop Open\tdrop', '', 'fly file from terminal use drop' ],
+            \ ], 'auto')
+
+"窗口与Tab相关的选项
+call quickui#menu#install('&View', [
+            \ ["TabNew\t\\tc", 'tabnew'],
+            \ ["TabClose\t\\tq", 'tabclose'],
+            \ ["TabChoose\tAlt+E", 'ChooseWin'],
+            \ ["TabPrev\t\\tp", 'tabp'],
+            \ ["TabNext\t\\tn", 'tabn'],
+            \ ["TabOnly\t\\to", 'tabonly'],
+            \ ["Tab&OpenCur\t\\tw", 'tab split', 'open cur window in new tab'],
+            \ ['TabMove&L', 'call Tab_MoveLeft()'],
+            \ ['TabMove&R', 'call Tab_MoveRight()'],
+            \ ["--", ''],
+            \ ["Window &Quickfix On/Off\tF10", 'call asyncrun#quickfix_toggle(6)'],
+            \ ["Window &NERDTree On/Off\tSpace+nn", 'NERDTree %'],
+            \ ["Window &TagBar On/Off", 'toggle tagbar'],
+            \ ['Window &Split\tsp', 'call feedkeys(":sp")'],
+            \ ['Window Split&V\tvsp', 'call feedkeys(":vsp")'],
+            \ ['WindowH+', 'res +5'],
+            \ ['WindowH-', 'res -5'],
+            \ ['WindowW+', 'vertical resize +5'],
+            \ ['WindowW-', 'vertical resize +5'],
             \ ])
 
-" 每个项目还可以多包含一个字段，表示它的帮助文档，光标过去时会被显示到最下方的命令行
-call quickui#menu#install('&Edit', [
-            \ [ '&Copy', 'echo 1', 'help 1' ],
-            \ [ '&Paste', 'echo 2', 'help 2' ],
-            \ [ '&Find', 'echo 3', 'help 3' ],
-            \ ])
+call quickui#menu#install('&Symbol', [
+			\ [ "&Grep Word\t(In Project)", 'call MenuHelp_GrepCode()', 'Grep keyword in current project' ],
+			\ [ "--", ],
+			\ [ "Find &Definition\t(GNU Global)", 'call MenuHelp_Gscope("g")', 'GNU Global search g'],
+			\ [ "Find &Symbol\t(GNU Global)", 'call MenuHelp_Gscope("s")', 'GNU Gloal search s'],
+			\ [ "Find &Called by\t(GNU Global)", 'call MenuHelp_Gscope("d")', 'GNU Global search d'],
+			\ [ "Find C&alling\t(GNU Global)", 'call MenuHelp_Gscope("c")', 'GNU Global search c'],
+			\ [ "Find &From Ctags\t(GNU Global)", 'call MenuHelp_Gscope("z")', 'GNU Global search c'],
+			\ [ "--", ],
+			\ [ "Goto D&efinition\t(YCM)", 'YcmCompleter GoToDefinitionElseDeclaration'],
+			\ [ "Goto &References\t(YCM)", 'YcmCompleter GoToReferences'],
+			\ [ "Get D&oc\t(YCM)", 'YcmCompleter GetDoc'],
+			\ [ "Get &Type\t(YCM)", 'YcmCompleter GetTypeImprecise'],
+			\ ])
+
+call quickui#menu#install('SC&M', [
+            \ [ 'P4Ssync', 'call TerminalToggle()', '' ],
+            \ [ 'P4Resolve', '', '' ],
+            \ [ 'P4Diff', ''],
+			\ ["--", '' ],
+            \ [ 'GitDiff', ''],
+            \ ], 'auto')
+
+call quickui#menu#install('&Terminal', [
+            \ [ '&Terminal Window Toggle\tAlt+T', 'call TerminalToggle()', '' ],
+            \ [ 'Terminal Normal\tAlt+Q', ''],
+            \ [ 'Drop Open\tdrop', '', 'fly file from terminal use drop' ],
+            \ ], 'auto')
+
+call quickui#menu#install('&Run', [
+			\ [ '&Terminal Window Toggle\tAlt+T', 'call TerminalToggle()', '' ],
+            \ [ 'Terminal Normal\tAlt+Q', '', '' ],
+            \ [ 'Drop Open\tdrop', '', 'fly file from terminal use drop' ],
+            \ ], 'auto')
 
 " 在 %{...} 内的脚本会被求值并展开成字符串
-call quickui#menu#install("&Option", [
+call quickui#menu#install("&Tool", [
+			\ ["Switch &Buffer", 'call quickui#tools#kit_buffers("e")'],
+			\ ["--", ''],
 			\ ['Set &Spell %{&spell? "Off":"On"}', 'set spell!'],
 			\ ['Set &Cursor Line %{&cursorline? "Off":"On"}', 'set cursorline!'],
 			\ ['Set &Paste %{&paste? "Off":"On"}', 'set paste!'],
+			\ ["--", ''],
+			\ ["Plugin &List", "PlugList", 'list available plugins'],
+			\ ["Plugin &Update", "PlugUpdate", 'update plugins']
 			\ ])
 
 " install 命令最后可以加一个 “权重”系数，用于决定目录位置，权重越大越靠右，越小越靠左
@@ -397,6 +469,9 @@ call quickui#menu#install('H&elp', [
 			\ ["&Tutorial", 'help tutor', ''],
 			\ ['&Quick Reference', 'help quickref', ''],
 			\ ['&Summary', 'help summary', ''],
+			\ ['--',''],
+			\ ['&Vim Script', 'help eval', ''],
+			\ ['&Function List', 'help function-list', ''],
 			\ ], 10000)
 
 " 打开下面选项，允许在 vim 的下面命令行部分显示帮助信息
@@ -404,7 +479,3 @@ let g:quickui_show_tip = 1
 
 "定义按两次空格就打开上面的目录
 noremap <space><space> :call quickui#menu#open()<cr>
-
-
-
-
