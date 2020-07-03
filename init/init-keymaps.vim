@@ -19,11 +19,12 @@
 "----------------------------------------------------------------------
 " INSERT 模式下使用 EMACS 键位
 "----------------------------------------------------------------------
-" inoremap <c-a> <home>
-" inoremap <c-e> <end>
-" inoremap <c-d> <del>
-" inoremap <c-_> <c-k>
+"inoremap <c-a> <home>
+"inoremap <c-e> <end>
+"inoremap <c-d> <del>
+"inoremap <c-_> <c-k> 
 inoremap jk <ESC>
+inoremap <c-[> <ESC>
 
 
 "----------------------------------------------------------------------
@@ -168,6 +169,7 @@ noremap <silent><m-right> :call Tab_MoveRight()<cr>
 "tag
 noremap <silent> <leader>n :tnext<cr>
 noremap <silent> <leader>p :tprev<cr>
+nnoremap <F3> :call quickui#tools#preview_tag('')<cr>
 
 
 "----------------------------------------------------------------------
@@ -263,13 +265,7 @@ nnoremap <silent> <F7> :AsyncRun -cwd=<root> make <cr>
 " 更新 cmake
 nnoremap <silent> <F7> :AsyncRun -cwd=<root> cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .<cr>
 
-" 保存当前文件
-nmap <C-S> :w! <CR>
-
-nmap <leader>sq :wq! <CR>
-
-
-" vim终端打开与关闭
+"vim终端打开与关闭
 let g:terminal_key = '<m-t>'
 
 " vim终端切换到普通模式
@@ -360,17 +356,13 @@ else
 				\ '<root>' <cr>
 endif
 
-function! TermExit(code)
-	echom "terminal exit code: ". a:code
-endfunc
 
-let opts = {'w':60, 'h':8, 'callback':'TermExit'}
-let opts.title = 'Terminal Popup'
+" 保存当前文件
+nmap <C-S> :w! <CR
 
 " 安装一个 File 目录，使用 [名称，命令] 的格式表示各个选项。
 call quickui#menu#install('&File', [
             \ ["&New File", 'new'],
-            \ ["New &Window", 'new'],
             \ ["Find File Mu\tCtrl+P", 'Leaderf file'],
             \ ["Find File Recent\tCtrl+N", 'Leaderf mru --regexMode'],
             \ ["Find File In Buffer\tAlt+N", ''],
@@ -385,15 +377,11 @@ call quickui#menu#install('&File', [
             \ ["E&xit\tAlt+X", 'q'],
             \ ], 0)
 
-call quickui#menu#install('&Edit', [
-			\ [ '&Terminal Window Toggle\tAlt+T', 'call TerminalToggle()', '' ],
-            \ [ 'Terminal Normal\tAlt+Q', '', '' ],
-            \ [ 'Drop Open\tdrop', '', 'fly file from terminal use drop' ],
-            \ ], 'auto')
+"设置 F10 打开/关闭 Quickfix 窗口
+nmap <F10> :call asyncrun#quickfix_toggle(6)<cr>
 
-"窗口与Tab相关的选项
+"窗口/Buffer/Tab相关的选项
 call quickui#menu#install('&View', [
-            \ ["TabNew\t\\tc", 'tabnew'],
             \ ["TabClose\t\\tq", 'tabclose'],
             \ ["TabChoose\tAlt+E", 'ChooseWin'],
             \ ["TabPrev\t\\tp", 'tabp'],
@@ -402,67 +390,104 @@ call quickui#menu#install('&View', [
             \ ["Tab&OpenCur\t\\tw", 'tab split', 'open cur window in new tab'],
             \ ['TabMove&L', 'call Tab_MoveLeft()'],
             \ ['TabMove&R', 'call Tab_MoveRight()'],
+			\ ["--", ''],
+            \ ["View &Quickfix\tF10", 'call asyncrun#quickfix_toggle(6)'],
+            \ ["View &NERDTree\tSpace+nn", 'NERDTree %'],
+			\ ["View &BufferList", 'call quickui#tools#list_buffer("e")'],
             \ ["--", ''],
-            \ ["Window &Quickfix On/Off\tF10", 'call asyncrun#quickfix_toggle(6)'],
-            \ ["Window &NERDTree On/Off\tSpace+nn", 'NERDTree %'],
-            \ ["Window &TagBar On/Off", 'toggle tagbar'],
-            \ ['Window &Split\tsp', 'call feedkeys(":sp")'],
-            \ ['Window Split&V\tvsp', 'call feedkeys(":vsp")'],
+            \ ['Window &Split', 'call feedkeys(":sp")'],
+            \ ['Window Split&V', 'call feedkeys(":vsp")'],
             \ ['WindowH+', 'res +5'],
             \ ['WindowH-', 'res -5'],
             \ ['WindowW+', 'vertical resize +5'],
             \ ['WindowW-', 'vertical resize +5'],
             \ ])
 
+
+call quickui#menu#install('&Edit', [
+			\ [ "Comment\t\\cc", '', 'Comment out the current line or text selected in visual mode'],
+			\ [ "UnComment\t\\cu", '', 'Uncomments the selected line(s)'],
+            \ ], 'auto')
+
+call quickui#menu#install('&CPP_Snippets', [
+			\ [ 'Comment\t\\cc', 'call TerminalToggle()', '' ],
+			\ [ 'UComment\t\\cu', 'call TerminalToggle()', '' ],
+            \ ], 'auto', 'c,cpp,h,hpp,cc')
+
+"异步任务
+"call quickui#menu#install('&Move', [
+"			\ [ 'Build', 'call TerminalToggle()', '' ],
+"            \ [ 'SymbolGen', '', '' ],
+"            \ ], 'auto')
+
+"设置 F10 打开/关闭 Quickfix 窗口
+nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
+
+let g:Lf_PreviewInPopup = 1
+let g:gutentags_plus_nomap = 1
+"符号相关|查找|跳转|预览
 call quickui#menu#install('&Symbol', [
-			\ [ "&Grep Word\t(In Project)", 'call MenuHelp_GrepCode()', 'Grep keyword in current project' ],
-			\ [ "--", ],
-			\ [ "Find &Definition\t(GNU Global)", 'call MenuHelp_Gscope("g")', 'GNU Global search g'],
-			\ [ "Find &Symbol\t(GNU Global)", 'call MenuHelp_Gscope("s")', 'GNU Gloal search s'],
-			\ [ "Find &Called by\t(GNU Global)", 'call MenuHelp_Gscope("d")', 'GNU Global search d'],
-			\ [ "Find C&alling\t(GNU Global)", 'call MenuHelp_Gscope("c")', 'GNU Global search c'],
-			\ [ "Find &From Ctags\t(GNU Global)", 'call MenuHelp_Gscope("z")', 'GNU Global search c'],
-			\ [ "--", ],
+			\ [ "&Grep Word(Project)\tF2", '', 'asyn grep cur symbol in cur project not quickfix windows'],
+			\ [ "--", ''],
+            \ [ "Tag List\tAlt+P", '', 'list all tag defined in cur file'],
+			\ [ "Preview &FunctionList", 'call quickui#tools#list_function()'],
+			\ [ "Preview TagDefinition\tF3", 'call quickui#tools#preview_tag("")'],
+			\ [ "--", ''],
+			\ [ "Find &Definition(GNU)", 'call gutentags_plus#GscopeFindSymbol()', 'GNU Global search g'],
+			\ [ "Find &Reference(GNU)", 'call MenuHelp_Gscope("s")', 'GNU Gloal search s'],
+			\ [ "Find &Included by(GNU)", '', 'find file include current file'],	
+			\ [ "Find &Called by(GNU)", 'call MenuHelp_Gscope("d")', 'GNU Global search d'],
+			\ [ "--", ''],
 			\ [ "Goto D&efinition\t(YCM)", 'YcmCompleter GoToDefinitionElseDeclaration'],
 			\ [ "Goto &References\t(YCM)", 'YcmCompleter GoToReferences'],
 			\ [ "Get D&oc\t(YCM)", 'YcmCompleter GetDoc'],
 			\ [ "Get &Type\t(YCM)", 'YcmCompleter GetTypeImprecise'],
-			\ ])
+			\ ], 'auto')
 
-call quickui#menu#install('SC&M', [
-            \ [ 'P4Ssync', 'call TerminalToggle()', '' ],
-            \ [ 'P4Resolve', '', '' ],
-            \ [ 'P4Diff', ''],
-			\ ["--", '' ],
-            \ [ 'GitDiff', ''],
-            \ ], 'auto')
+"版本管理相关p4/git
+"call quickui#menu#install('SC&M', [
+"            \ [ 'P4Ssync', 'call TerminalToggle()', '' ],
+"            \ [ 'P4Resolve', '', '' ],
+"            \ [ 'P4Login', ''],
+"			\ ["--", '' ],
+"            \ [ 'GitDiff', ''],
+"            \ ], 'auto')
 
+function! TermExit(code)
+	echom "terminal exit code: ". a:code
+endfunc
+
+let opts = {'w':60, 'h':8, 'callback':'TermExit'}
+let opts.title = 'Terminal Popup'
+
+"终端
 call quickui#menu#install('&Terminal', [
             \ [ '&Terminal Window Toggle\tAlt+T', 'call TerminalToggle()', '' ],
             \ [ 'Terminal Normal\tAlt+Q', ''],
-            \ [ 'Drop Open\tdrop', '', 'fly file from terminal use drop' ],
+            \ [ 'Drop Open\tdrop', '', 'fly file from terminal 2 vim use drop cmd' ],
             \ ], 'auto')
 
-call quickui#menu#install('&Run', [
-			\ [ '&Terminal Window Toggle\tAlt+T', 'call TerminalToggle()', '' ],
-            \ [ 'Terminal Normal\tAlt+Q', '', '' ],
-            \ [ 'Drop Open\tdrop', '', 'fly file from terminal use drop' ],
-            \ ], 'auto')
+"异步任务
+"call quickui#menu#install('&Run', [
+"			\ [ 'Build', 'call TerminalToggle()', '' ],
+"            \ [ 'SymbolGen', '', '' ],
+"            \ ], 'auto')
 
-" 在 %{...} 内的脚本会被求值并展开成字符串
-call quickui#menu#install("&Tool", [
-			\ ["Switch &Buffer", 'call quickui#tools#kit_buffers("e")'],
+"其他辅助
+call quickui#menu#install("Tools", [
+			\ ["Display &Messages", 'call quickui#tools#display_messages()'],
 			\ ["--", ''],
 			\ ['Set &Spell %{&spell? "Off":"On"}', 'set spell!'],
 			\ ['Set &Cursor Line %{&cursorline? "Off":"On"}', 'set cursorline!'],
 			\ ['Set &Paste %{&paste? "Off":"On"}', 'set paste!'],
 			\ ["--", ''],
-			\ ["Plugin &List", "PlugList", 'list available plugins'],
-			\ ["Plugin &Update", "PlugUpdate", 'update plugins']
+			\ ["Plugin Status", "PlugStatus", 'list plugins status'],
+			\ ["Plugin Update", "PlugUpdate", 'update plugins'],
+			\ ["Plugin Clean", "PlugClean", 'update plugins']
 			\ ])
 
-" install 命令最后可以加一个 “权重”系数，用于决定目录位置，权重越大越靠右，越小越靠左
-call quickui#menu#install('H&elp', [
+"命令最后可以加一个 “权重”系数，用于决定目录位置，权重越大越靠右，越小越靠左
+call quickui#menu#install('Help', [
 			\ ["&Cheatsheet", 'help index', ''],
 			\ ['T&ips', 'help tips', ''],
 			\ ['--',''],
@@ -479,3 +504,4 @@ let g:quickui_show_tip = 1
 
 "定义按两次空格就打开上面的目录
 noremap <space><space> :call quickui#menu#open()<cr>
+vmap <space><space> :call quickui#menu#open()<cr>
