@@ -213,7 +213,7 @@ if index(g:bundle_group, 'tags') >= 0
 
 	"let g:gutentags_define_advanced_commands = 1
 	let $GTAGSLABEL = 'native-pygments'
-	let $GTAGSCONF = '/data/home/pluswu/.globalrc'
+	let $GTAGSCONF = '/data/home/pluswu/.vim/vim-init/.globalrc'
 
 	" 设置 ctags 的参数
 	let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--c-kinds=+px', '--c++-kinds=+px']
