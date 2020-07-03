@@ -16,6 +16,8 @@
 if !exists('g:bundle_group')
 	let g:bundle_group = ['basic', 'tags', 'enhanced', 'filetypes', 'textobj']
 	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'echodoc']
+	" let g:bundle_group += ['ale']
+	let g:bundle_group += ['neomake']
 	let g:bundle_group += ['leaderf']
 endif
 
@@ -302,13 +304,19 @@ if index(g:bundle_group, 'airline') >= 0
 endif
 
 
+
 "----------------------------------------------------------------------
 " NERDTree
 "----------------------------------------------------------------------
 if index(g:bundle_group, 'nerdtree') >= 0
-	Plug 'scrooloose/nerdtree', {'on': ['NERDTree', 'NERDTreeFocus', 'NERDTreeToggle', 'NERDTreeCWD', 'NERDTreeFind'] }
-	Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+	Plug 'preservim/nerdtree', {'on': ['NERDTree', 'NERDTreeFocus', 'NERDTreeToggle', 'NERDTreeCWD', 'NERDTreeFind'] }
+	"Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 	let g:NERDTreeHijackNetrw = 0
+	let g:NERDTreeHijackNetrw = 0
+	let g:WebDevIconsUnicodeDecorateFolderNodes = 1
+	let g:DevIconsEnableFoldersOpenClose = 1
+	let g:DevIconsDefaultFolderOpenSymbol='' " symbol for open folder (f07c)
+	let g:WebDevIconsUnicodeDecorateFolderNodesDefaultSymbol='' " symbol for closed folder (f07b)
 endif
 
 
@@ -327,8 +335,10 @@ endif
 	" map <space>rn <Plug>(grammarous-move-to-next-error)
 	" map <space>rp <Plug>(grammarous-move-to-previous-error)
 " endif
-
-Plug 'neomake/neomake'
+"
+if index(g:bundle_group, 'neomake') >= 0
+	Plug 'neomake/neomake'
+endif
 
 "----------------------------------------------------------------------
 " ale：动态语法检查
@@ -338,7 +348,7 @@ if index(g:bundle_group, 'ale') >= 0
 
 	" 设定延迟和提示信息
 	let g:ale_completion_delay = 500
-	let g:ale_echo_delay = 20pygments_parser.py
+	let g:ale_echo_delay = 20
 	let g:ale_lint_delay = 500
 	let g:ale_echo_msg_format = '[%linter%] %code: %%s'
 
@@ -350,7 +360,7 @@ if index(g:bundle_group, 'ale') >= 0
 	" 开启解析 compile_commands 的功能
 	let g:ale_c_parse_compile_commands = 1
 	" ale 将在工程目录下的 build 和 . 中搜索 compile_commands.json
-	let g:ale_c_build_dir_names = ['build','.']
+	let g:ale_c_build_dir_names = ['build', '.']
 
 	" 在 linux/mac 下降低语法检查程序的进程优先级（不要卡到前台进程）
 	if has('win32') == 0 && has('win64') == 0 && has('win32unix') == 0
@@ -370,7 +380,6 @@ if index(g:bundle_group, 'ale') >= 0
 				\ 'java': ['javac'],
 				\ 'javascript': ['eslint'], 
 				\ }
-
 
 	" 获取 pylint, flake8 的配置文件，在 vim-init/tools/conf 下面
 	function s:lintcfg(name)
@@ -637,15 +646,17 @@ let g:ycm_filetype_whitelist = {
 			\ "ps1":1,
 			\ }
 
+if index(g:bundle_group, 'neomake') >= 0
+	" When writing a buffer (no delay).
+	call neomake#configure#automake('w')
+	" When writing a buffer (no delay), and on normal mode changes (after 750ms)
+	call neomake#configure#automake('nw', 750)
+	" When reading a buffer (after 1s), and when writing (no delay).
+	call neomake#configure#automake('rw', 1000)
+	" Full config: when writing or reading a buffer, and on changes in insert
+	" normal mode (after 500ms; no delay when witing).
+	call neomake#configure#automake('nrwi', 500)
+endif 
 
-" When writing a buffer (no delay).
-call neomake#configure#automake('w')
-" When writing a buffer (no delay), and on normal mode changes (after 750ms)
-call neomake#configure#automake('nw', 750)
-" When reading a buffer (after 1s), and when writing (no delay).
-call neomake#configure#automake('rw', 1000)
-" Full config: when writing or reading a buffer, and on changes in insert
-" normal mode (after 500ms; no delay when witing).
-call neomake#configure#automake('nrwi', 500)
 
 
