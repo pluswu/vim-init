@@ -366,6 +366,7 @@ endif
 " 保存当前文件
 nmap <C-S> :w! <cr>
 
+let g:quickui_color_scheme = 'gruvbox'
 " 安装一个 File 目录，使用 [名称，命令] 的格式表示各个选项。
 call quickui#menu#install('&File', [
             \ ["&Open File", 'call feedkeys(":tabe ")' ],
@@ -403,7 +404,8 @@ call quickui#menu#install('&View', [
             \ ['TabMove&R', 'call Tab_MoveRight()'],
             \ ["--", ''],
             \ ["View &Quickfix\tF10", 'call asyncrun#quickfix_toggle(6)'],
-            \ ["View &NERDTree\tSpace+nn", 'NERDTree'],
+            \ ["View &NERDTreeR\tSpace+nn", 'NERDTree', 'file tree expand base project_root'],
+            \ ["View NERDTreeC\tSpace+nc", 'NERDTree', 'file tree expand cwd'],
             \ ["View TagBar\ttt", 'TagbarToggle'],
             \ ["View &BufferList\tAlt+P", 'call quickui#tools#list_buffer("e")'],
             \ ["--", ''],
@@ -472,8 +474,34 @@ if (index(g:bundle_group, 'tags')) >= 0
 	"Find current word in ctags database	
 	noremap <silent> <leader>gz :GscopeFind z <C-R><C-W><cr>
 
-	function! MenuHelp_Gscope(flag)
-		execute "GscopeFind " .. a:flag .. " " .. expand("<cword>")
+
+	function! MenuHelp_Gscope(what)
+		let p = asyncrun#get_root('%')
+		let t = ''
+		let m = {}
+		let m["s"] = "string symbol"
+		let m['g'] = 'definition'
+		let m['d'] = 'functions called by this'
+		let m['c'] = 'functions calling this'
+		let m['t'] = 'string'
+		let m['e'] = 'egrep pattern'
+		let m['f'] = 'file'
+		let m['i'] = 'files #including this file'
+		let m['a'] = 'places where this symbol is assigned'
+		let m['z'] = 'ctags database'
+		if a:what == 'f' || a:what == 'i'
+			" let t = expand('<cfile>')
+		endif
+		echohl Type
+		call inputsave()
+		let t = input('Find '.m[a:what].' in (' . p . '): ', t)
+		call inputrestore()
+		echohl None
+		redraw | echo "" | redraw
+		if t == ''
+			return 0
+		endif
+		exec 'GscopeFind '. a:what. ' ' . fnameescape(t)
 	endfunc
 
 	"提供基于 TAGS 的定义预览，函数参数预览，quickfix 预览
@@ -494,7 +522,7 @@ if (index(g:bundle_group, 'tags')) >= 0
 			\ [ "Find &Definition(GNU)\t\\gg", 'call MenuHelp_Gscope("g")', 'GNU Global search s definition'],
 			\ [ "Find &Reference(GNU)\t\\gs", 'call MenuHelp_Gscope("s")', 'GNU Gloal search s Reference'],
 			\ [ "Find &Included by(GNU)\t\\gi", 'call MenuHelp_Gscope("i")', 'GNU Global serach file include cword'],	
-			\ [ "Find &Called by(GNU)\t\\gd", 'call MenuHelp_Gscope("d")', 'GNU Global search d'],
+			\ [ "Find &Called by(GNU)\t\\gc", 'call MenuHelp_Gscope("c")', 'GNU Global search d'],
 			\ ], 'auto')
 endif
 
@@ -525,7 +553,7 @@ call quickui#menu#install('&Terminal', [
             \ ], 'auto')
 
 "其他辅助
-call quickui#menu#install("Tools", [
+call quickui#menu#install("T&ools", [
 			\ ["Display &Messages", 'call quickui#tools#display_messages()'],
 			\ ["--", ''],
 			\ ['Set &Spell %{&spell? "Off":"On"}', 'set spell!'],
@@ -537,8 +565,39 @@ call quickui#menu#install("Tools", [
 			\ ["Plugin Clean", "PlugClean", 'update plugins']
 			\ ])
 
+function! MenuHelp_TaskList()
+	let keymaps = '123456789abcdefimopqrstuvwxyz'
+	let items = asynctasks#list('')
+	let rows = []
+	let size = strlen(keymaps)
+	let index = 0
+	for item in items
+		if item.name =~ '^\.'
+			continue
+		endif
+		let cmd = strpart(item.command, 0, (&columns * 60) / 100)
+		let key = (index >= size)? ' ' : strpart(keymaps, index, 1)
+		let text = "[" . ((key != ' ')? ('&' . key) : ' ') . "]\t"
+		let text .= item.name . "\t[" . item.scope . "]\t" . cmd
+		let rows += [[text, 'AsyncTask ' . fnameescape(item.name)]]
+		let index += 1
+	endfor
+	let opts = {}
+	let opts.title = 'Task List'
+	" let opts.bordercolor = 'QuickTitle'
+	call quickui#tools#clever_listbox('tasks', rows, opts)
+endfunc
+
+call quickui#menu#install('&Run', [
+			\ ["&Cheatsheet", 'help index', ''],
+			\ ['T&ips', 'help tips', ''],
+			\ ['--',''],
+			\ ["&Tutorial", 'help tutor', ''],
+			\ ['&Quick Reference', 'help quickref', ''],
+			\ ], 'auto')
+	
 "命令最后可以加一个 “权重”系数，用于决定目录位置，权重越大越靠右，越小越靠左
-call quickui#menu#install('Help', [
+call quickui#menu#install('Hel&p', [
 			\ ["&Cheatsheet", 'help index', ''],
 			\ ['T&ips', 'help tips', ''],
 			\ ['--',''],
@@ -549,6 +608,8 @@ call quickui#menu#install('Help', [
 			\ ['&Vim Script', 'help eval', ''],
 			\ ['&Function List', 'help function-list', ''],
 			\ ], 10000)
+
+
 
 " 打开下面选项，允许在 vim 的下面命令行部分显示帮助信息
 let g:quickui_show_tip = 1

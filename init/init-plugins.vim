@@ -191,7 +191,7 @@ if index(g:bundle_group, 'tags') >= 0
 	Plug 'majutsushi/tagbar'
 
 	" 提供 GscopeFind 命令并自动处理好 gtags 数据库切换
-	" 支持光标移动到符号名上：<leader>cg 查看定义，<leader>cs 查看引用
+	" 支持光标移动到符号名上：<leader>gg 查看定义，<leader>gs 查看引用
 	Plug 'skywind3000/gutentags_plus'
 
 	" 设定项目目录标志：除了 .git/.svn 外，还有 .root 文件
@@ -217,6 +217,8 @@ if index(g:bundle_group, 'tags') >= 0
 	let $GTAGSLABEL = 'native-pygments'
 	let $GTAGSCONF = '/data/home/pluswu/.vim/vim-init/.globalrc'
 
+	let g:gutentags_define_advanced_commands = 1
+
 	" 设置 ctags 的参数
 	let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--c-kinds=+px', '--c++-kinds=+px']
 
@@ -225,6 +227,7 @@ if index(g:bundle_group, 'tags') >= 0
 
 	" 禁止 gutentags 自动链接 gtags 数据库
 	let g:gutentags_auto_add_gtags_cscope = 0
+
 endif
 
 if index(g:bundle_group, 'coc') >= 0
@@ -433,7 +436,7 @@ if index(g:bundle_group, 'leaderf') >= 0
 
 		"noremap <leader>fr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
 		"Alt+p 打开函数列表，按 i 进入模糊匹配，ESC 退出
-		noremap <c-P> :LeaderfFunction!<cr>
+		noremap <m-P> :LeaderfFunction!<cr>
 		" ALT+p 打开 tag 列表，i 进入模糊匹配，ESC退出
 		noremap <m-p> :LeaderfBufTag!<cr>
 
@@ -461,7 +464,7 @@ if index(g:bundle_group, 'leaderf') >= 0
 		let g:Lf_UseVersionControlTool = 0
 		" 模糊匹配忽略扩展名
 		let g:Lf_WildIgnore = {
-					\ 'dir': ['.svn','.git', '.hg', '.ccls_cache'],
+					\ 'dir': ['.svn','.git', '.hg', '.ccls-cache'],
 					\ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
 					\ }
 
@@ -483,6 +486,10 @@ if index(g:bundle_group, 'leaderf') >= 0
 				\ "BufTag": [["<ESC>", ':exec g:Lf_py "bufTagExplManager.quit()"<cr>']],
 				\ "Function": [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<cr>']],
 				\ }
+
+		"let g:Lf_GtagsAutoGenerate = 1
+		"let g:Lf_Gtagslabel = 'native-pygments'
+		"let g:Lf_Gtagsconf = '/data/home/pluswu/.vim/vim-init/.globalrc'
 	else
 		" 不支持 python ，使用 CtrlP 代替
 		Plug 'ctrlpvim/ctrlp.vim'
