@@ -19,10 +19,12 @@
 "----------------------------------------------------------------------
 " INSERT 模式下使用 EMACS 键位
 "----------------------------------------------------------------------
-"inoremap <c-a> <home>
-"inoremap <c-e> <end>
-"inoremap <c-d> <del>
-"inoremap <c-_> <c-k> 
+inoremap <c-a> <home>
+inoremap <c-e> <end>
+inoremap <c-d> <del>
+inoremap <c-_> <c-k> 
+
+"ecs
 inoremap jk <ESC>
 inoremap <c-[> <ESC>
 
@@ -125,7 +127,6 @@ endif
 "退出
 nmap <m-x> :q<cr>
 
-
 "----------------------------------------------------------------------
 " 缓存：插件 unimpaired 中定义了 [b, ]b 来切换缓存
 "----------------------------------------------------------------------
@@ -141,7 +142,6 @@ noremap <silent> <leader>bp :bp<cr>
 noremap <silent> <leader>tc :tabnew<cr>
 noremap <silent> <leader>tw :tab split<cr>
 noremap <silent> <leader>tq :tabclose<cr>
-noremap <silent> <leader>tp :tabprev<cr>
 noremap <silent> <leader>tn :tabnext<cr>
 noremap <silent> <leader>to :tabonly<cr>
 
@@ -169,7 +169,6 @@ noremap <silent><m-right> :call Tab_MoveRight()<cr>
 "tag
 noremap <silent> <leader>n :tnext<cr>
 noremap <silent> <leader>p :tprev<cr>
-nnoremap <F3> :call quickui#tools#preview_tag('')<cr>
 
 
 "----------------------------------------------------------------------
@@ -265,6 +264,13 @@ nnoremap <silent> <F7> :AsyncRun -cwd=<root> make <cr>
 " 更新 cmake
 nnoremap <silent> <F7> :AsyncRun -cwd=<root> cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .<cr>
 
+
+
+
+
+
+
+
 "vim终端打开与关闭
 let g:terminal_key = '<m-t>'
 
@@ -275,6 +281,7 @@ tnoremap <m-q> <c-\><c-n>
 if has('win32') || has('win64')
 	nnoremap <silent> <F8> :AsyncRun -cwd=<root> -mode=4 make run <cr>
 endif
+
 
 if index(g:bundle_group, 'nerdtree') >= 0
 	noremap <space>nn :NERDTreeToggle<cr>
@@ -356,18 +363,16 @@ else
 				\ '<root>' <cr>
 endif
 
-
 " 保存当前文件
-nmap <C-S> :w! <CR
+nmap <C-S> :w! <cr>
 
 " 安装一个 File 目录，使用 [名称，命令] 的格式表示各个选项。
 call quickui#menu#install('&File', [
-            \ ["&New File", 'new'],
+            \ ["&Open File", 'call feedkeys(":tabe ")' ],
             \ ["Find File Mu\tCtrl+P", 'Leaderf file'],
-            \ ["Find File Recent\tCtrl+N", 'Leaderf mru --regexMode'],
-            \ ["Find File In Buffer\tAlt+N", ''],
+            \ ["Find File Recent\t\\rf", 'Leaderf mru --regexMode'],
+            \ ["Find File In Buffer\tAlt+N", 'LeaderfBuffer'],
             \ ["--", '' ],
-		    \ ["&Open File", 'call feedkeys(":tabe ")' ],	
             \ ["&Close", 'close', 'close cur file'],
             \ ["--", '' ],
             \ ["Save\tCtrl+s", 'w!', ''],
@@ -375,74 +380,133 @@ call quickui#menu#install('&File', [
             \ ["Save All", 'wa', ''],
             \ ["--", '' ],
             \ ["E&xit\tAlt+X", 'q'],
-            \ ], 0)
+            \ ])
 
 "设置 F10 打开/关闭 Quickfix 窗口
 nmap <F10> :call asyncrun#quickfix_toggle(6)<cr>
 
+if index(g:bundle_group, 'nerdtree') >= 0
+	noremap <space>nn :NERDTreeToggle<cr>
+	noremap <space>nc :NERDTree %<cr>
+endif
+
 "窗口/Buffer/Tab相关的选项
 call quickui#menu#install('&View', [
-            \ ["TabClose\t\\tq", 'tabclose'],
             \ ["TabChoose\tAlt+E", 'ChooseWin'],
+            \ ["Tab&OpenCur\t\\tw", 'tab split', 'open cur window in new tab'],
+            \ ["TabGo\t\\Num\tor\tAlt+Num", 'go tab Num'],
             \ ["TabPrev\t\\tp", 'tabp'],
             \ ["TabNext\t\\tn", 'tabn'],
+            \ ["TabClose\t\\tq", 'tabclose'],
             \ ["TabOnly\t\\to", 'tabonly'],
-            \ ["Tab&OpenCur\t\\tw", 'tab split', 'open cur window in new tab'],
             \ ['TabMove&L', 'call Tab_MoveLeft()'],
             \ ['TabMove&R', 'call Tab_MoveRight()'],
-			\ ["--", ''],
-            \ ["View &Quickfix\tF10", 'call asyncrun#quickfix_toggle(6)'],
-            \ ["View &NERDTree\tSpace+nn", 'NERDTree %'],
-			\ ["View &BufferList", 'call quickui#tools#list_buffer("e")'],
             \ ["--", ''],
-            \ ['Window &Split', 'call feedkeys(":sp")'],
-            \ ['Window Split&V', 'call feedkeys(":vsp")'],
-            \ ['WindowH+', 'res +5'],
-            \ ['WindowH-', 'res -5'],
-            \ ['WindowW+', 'vertical resize +5'],
-            \ ['WindowW-', 'vertical resize +5'],
+            \ ["View &Quickfix\tF10", 'call asyncrun#quickfix_toggle(6)'],
+            \ ["View &NERDTree\tSpace+nn", 'NERDTree'],
+            \ ["View TagBar\ttt", 'TagbarToggle'],
+            \ ["View &BufferList\tAlt+P", 'call quickui#tools#list_buffer("e")'],
+            \ ["--", ''],
+            \ ["Window &Split\tsp", 'call feedkeys(":sp")'],
+            \ ["Window Split&V\tvsp", 'call feedkeys(":vsp")'],
+            \ ["WindowH+\tres", 'res +5'],
+            \ ["WindowH-\tres", 'res -5'],
+            \ ["WindowW+\tvert res", 'vertical resize +5'],
+            \ ["WindowW-\tvert res", 'vertical resize +5'],
             \ ])
-
 
 call quickui#menu#install('&Edit', [
 			\ [ "Comment\t\\cc", '', 'Comment out the current line or text selected in visual mode'],
 			\ [ "UnComment\t\\cu", '', 'Uncomments the selected line(s)'],
             \ ], 'auto')
 
-call quickui#menu#install('&CPP_Snippets', [
-			\ [ 'Comment\t\\cc', 'call TerminalToggle()', '' ],
-			\ [ 'UComment\t\\cu', 'call TerminalToggle()', '' ],
-            \ ], 'auto', 'c,cpp,h,hpp,cc')
+nmap <leader>pf :call quickui#tools#list_function()<CR>
+nmap <leader>pt :call quickui#tools#preview_tag('')<cr>
 
-"异步任务
-"call quickui#menu#install('&Move', [
-"			\ [ 'Build', 'call TerminalToggle()', '' ],
-"            \ [ 'SymbolGen', '', '' ],
-"            \ ], 'auto')
-
-"设置 F10 打开/关闭 Quickfix 窗口
-nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
-
-let g:Lf_PreviewInPopup = 1
-let g:gutentags_plus_nomap = 1
 "符号相关|查找|跳转|预览
 call quickui#menu#install('&Symbol', [
 			\ [ "&Grep Word(Project)\tF2", '', 'asyn grep cur symbol in cur project not quickfix windows'],
 			\ [ "--", ''],
-            \ [ "Tag List\tAlt+P", '', 'list all tag defined in cur file'],
-			\ [ "Preview &FunctionList", 'call quickui#tools#list_function()'],
-			\ [ "Preview TagDefinition\tF3", 'call quickui#tools#preview_tag("")'],
-			\ [ "--", ''],
-			\ [ "Find &Definition(GNU)", 'call gutentags_plus#GscopeFindSymbol()', 'GNU Global search g'],
-			\ [ "Find &Reference(GNU)", 'call MenuHelp_Gscope("s")', 'GNU Gloal search s'],
-			\ [ "Find &Included by(GNU)", '', 'find file include current file'],	
-			\ [ "Find &Called by(GNU)", 'call MenuHelp_Gscope("d")', 'GNU Global search d'],
-			\ [ "--", ''],
-			\ [ "Goto D&efinition\t(YCM)", 'YcmCompleter GoToDefinitionElseDeclaration'],
-			\ [ "Goto &References\t(YCM)", 'YcmCompleter GoToReferences'],
-			\ [ "Get D&oc\t(YCM)", 'YcmCompleter GetDoc'],
-			\ [ "Get &Type\t(YCM)", 'YcmCompleter GetTypeImprecise'],
+			\ [ "Preview FunctionList\t\\pf", 'call quickui#tools#list_function()'],
+			\ [ "Preview TagDef\t\\pt", 'call quickui#tools#preview_tag("")'],
 			\ ], 'auto')
+
+if (index(g:bundle_group, 'Leaderf'))
+	call quickui#menu#install('&Symbol', [
+			\ [ "TagList(Leaderf)\tAlt+P", 'LeaderfBufTag!'],
+            \ [ "Find &Tag GFuzzy(Leaderf)\tAlt+M", 'LeaderfTag', 'find tag reg fuzzy for project global'],
+			\ ], 'auto')
+endif
+
+if (index(g:bundle_group, 'tags')) >= 0
+	nmap <leader>tt :TagbarToggle<CR>
+
+	let g:gutentags_plus_nomap = 1
+	"Find symbol (reference) under cursor
+	noremap <silent> <leader>gs :GscopeFind s <C-R><C-W><cr> 
+
+	"Find symbol definition under cursor
+	noremap <silent> <leader>gg :GscopeFind g <C-R><C-W><cr>  
+
+	"Functions calling this function
+	noremap <silent> <leader>gc :GscopeFind c <C-R><C-W><cr>  
+
+	"find text string under cursor
+	noremap <silent> <leader>gt :GscopeFind t <C-R><C-W><cr>  
+
+	 "Find egrep pattern under cursor
+	noremap <silent> <leader>ge :GscopeFind e <C-R><C-W><cr>
+
+	"Find file name under cursor
+	noremap <silent> <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr> 
+
+	"Find files #including the file name under cursor
+	noremap <silent> <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr> 
+
+	"Functions called by this function  
+	noremap <silent> <leader>gd :GscopeFind d <C-R><C-W><cr>   
+
+	"Find places where current symbol is assigned
+	noremap <silent> <leader>ga :GscopeFind a <C-R><C-W><cr>
+
+	"Find current word in ctags database	
+	noremap <silent> <leader>gz :GscopeFind z <C-R><C-W><cr>
+
+	function! MenuHelp_Gscope(flag)
+		execute "GscopeFind " .. a:flag .. " " .. expand("<cword>")
+	endfunc
+
+	"提供基于 TAGS 的定义预览，函数参数预览，quickfix 预览
+	noremap <m-u> :PreviewScroll -1<cr>
+	noremap <m-d> :PreviewScroll +1<cr>
+	inoremap <m-u> <c-\><c-o>:PreviewScroll -1<cr>
+	inoremap <m-d> <c-\><c-o>:PreviewScroll +1<cr>
+	autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
+	autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+
+	noremap <F4> :PreviewSignature!<cr>
+	inoremap <F4> <c-\><c-o>:PreviewSignature!<cr>
+
+	call quickui#menu#install('&Symbol', [
+            \ [ "&TagBar\t\\tt", 'TagbarToggle'],
+			\ [ "--", ''],
+			\ [ "PviewSignature(GNU)\tF4", 'PreviewSignature!', 'GNU Global search s definition'],
+			\ [ "Find &Definition(GNU)\t\\gg", 'call MenuHelp_Gscope("g")', 'GNU Global search s definition'],
+			\ [ "Find &Reference(GNU)\t\\gs", 'call MenuHelp_Gscope("s")', 'GNU Gloal search s Reference'],
+			\ [ "Find &Included by(GNU)\t\\gi", 'call MenuHelp_Gscope("i")', 'GNU Global serach file include cword'],	
+			\ [ "Find &Called by(GNU)\t\\gd", 'call MenuHelp_Gscope("d")', 'GNU Global search d'],
+			\ ], 'auto')
+endif
+
+if index(g:bundle_group, 'ycm') >= 0
+	call quickui#menu#install('&Symbol', [
+			\ [ "--", ''],
+			\ [ "Goto D&efinition(YCM)", 'YcmCompleter GoToDefinitionElseDeclaration'],
+			\ [ "Goto &References(YCM)", 'YcmCompleter GoToReferences'],
+			\ [ "Get D&oc(YCM)", 'YcmCompleter GetDoc'],
+			\ [ "Get &Type(YCM)", 'YcmCompleter GetTypeImprecise'],
+			\ ], 'auto', 'c,cpp')
+endif
 
 "版本管理相关p4/git
 "call quickui#menu#install('SC&M', [
@@ -453,25 +517,12 @@ call quickui#menu#install('&Symbol', [
 "            \ [ 'GitDiff', ''],
 "            \ ], 'auto')
 
-function! TermExit(code)
-	echom "terminal exit code: ". a:code
-endfunc
-
-let opts = {'w':60, 'h':8, 'callback':'TermExit'}
-let opts.title = 'Terminal Popup'
-
 "终端
 call quickui#menu#install('&Terminal', [
-            \ [ '&Terminal Window Toggle\tAlt+T', 'call TerminalToggle()', '' ],
+            \ [ '&Terminal Window\tAlt+T', 'call TerminalToggle()', '' ],
             \ [ 'Terminal Normal\tAlt+Q', ''],
             \ [ 'Drop Open\tdrop', '', 'fly file from terminal 2 vim use drop cmd' ],
             \ ], 'auto')
-
-"异步任务
-"call quickui#menu#install('&Run', [
-"			\ [ 'Build', 'call TerminalToggle()', '' ],
-"            \ [ 'SymbolGen', '', '' ],
-"            \ ], 'auto')
 
 "其他辅助
 call quickui#menu#install("Tools", [

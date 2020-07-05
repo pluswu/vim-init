@@ -16,8 +16,10 @@
 if !exists('g:bundle_group')
 	let g:bundle_group = ['basic', 'tags', 'enhanced', 'filetypes', 'textobj']
 	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'echodoc']
-	" let g:bundle_group += ['ale']
-	let g:bundle_group += ['neomake']
+	let g:bundle_group += ['ycm']
+	let g:bundle_group += ['ale']
+	"let g:bundle_group += ['coc']
+	"let g:bundle_group += ['neomake']
 	let g:bundle_group += ['leaderf']
 endif
 
@@ -87,7 +89,6 @@ augroup MyPluginSetup
 	autocmd!
 	autocmd FileType dirvish call s:setup_dirvish()
 augroup END
-
 
 "----------------------------------------------------------------------
 " 基础插件
@@ -187,6 +188,8 @@ if index(g:bundle_group, 'tags') >= 0
 	" 提供 ctags/gtags 后台数据库自动更新功能
 	Plug 'ludovicchabant/vim-gutentags'
 
+	Plug 'majutsushi/tagbar'
+
 	" 提供 GscopeFind 命令并自动处理好 gtags 数据库切换
 	" 支持光标移动到符号名上：<leader>cg 查看定义，<leader>cs 查看引用
 	Plug 'skywind3000/gutentags_plus'
@@ -211,7 +214,6 @@ if index(g:bundle_group, 'tags') >= 0
 		let g:gutentags_modules += ['gtags_cscope']
 	endif
 
-	"let g:gutentags_define_advanced_commands = 1
 	let $GTAGSLABEL = 'native-pygments'
 	let $GTAGSCONF = '/data/home/pluswu/.vim/vim-init/.globalrc'
 
@@ -223,6 +225,10 @@ if index(g:bundle_group, 'tags') >= 0
 
 	" 禁止 gutentags 自动链接 gtags 数据库
 	let g:gutentags_auto_add_gtags_cscope = 0
+endif
+
+if index(g:bundle_group, 'coc') >= 0
+	Plug 'neoclide/coc.nvim', {'branch': 'release'}	
 endif
 
 
@@ -303,41 +309,29 @@ if index(g:bundle_group, 'airline') >= 0
 	let g:airline#extensions#vimagit#enabled = 0
 endif
 
-
-
 "----------------------------------------------------------------------
 " NERDTree
 "----------------------------------------------------------------------
 if index(g:bundle_group, 'nerdtree') >= 0
 	Plug 'preservim/nerdtree', {'on': ['NERDTree', 'NERDTreeFocus', 'NERDTreeToggle', 'NERDTreeCWD', 'NERDTreeFind'] }
-	"Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+
 	let g:NERDTreeHijackNetrw = 0
 	let g:NERDTreeHijackNetrw = 0
 	let g:WebDevIconsUnicodeDecorateFolderNodes = 1
 	let g:DevIconsEnableFoldersOpenClose = 1
-	let g:DevIconsDefaultFolderOpenSymbol='' " symbol for open folder (f07c)
-	let g:WebDevIconsUnicodeDecorateFolderNodesDefaultSymbol='' " symbol for closed folder (f07b)
+	let g:DevIconsDefaultFolderOpenSymbol='O' 
+	let g:WebDevIconsUnicodeDecorateFolderNodesDefaultSymbol='o' 
 endif
 
-
-"----------------------------------------------------------------------
-" LanguageTool 语法检查
-"----------------------------------------------------------------------
-" if index(g:bundle_group, 'grammer') >= 0
-	" Plug 'rhysd/vim-grammarous'
-	" noremap <space>rg :GrammarousCheck --lang=en-US --no-move-to-first-error --no-preview<cr>
-	" map <space>rr <Plug>(grammarous-open-info-window)
-	" map <space>rv <Plug>(grammarous-move-to-info-window)
-	" map <space>rs <Plug>(grammarous-reset)
-	" map <space>rx <Plug>(grammarous-close-info-window)
-	" map <space>rm <Plug>(grammarous-remove-error)
-	" map <space>rd <Plug>(grammarous-disable-rule)
-	" map <space>rn <Plug>(grammarous-move-to-next-error)
-	" map <space>rp <Plug>(grammarous-move-to-previous-error)
-" endif
-"
 if index(g:bundle_group, 'neomake') >= 0
 	Plug 'neomake/neomake'
+endif
+
+"----------------------------------------------------------------------
+" YouCompleteMe 默认设置：YCM 需要你另外手动编译安装
+"----------------------------------------------------------------------
+if index(g:bundle_group, 'ycm') >= 0
+	Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer',  'for': ['c', 'cpp'] }
 endif
 
 "----------------------------------------------------------------------
@@ -359,7 +353,7 @@ if index(g:bundle_group, 'ale') >= 0
 
 	" 开启解析 compile_commands 的功能
 	let g:ale_c_parse_compile_commands = 1
-	" ale 将在工程目录下的 build 和 . 中搜索 compile_commands.json
+	"ale 将在工程目录下的 build 和 . 中搜索 compile_commands.json
 	let g:ale_c_build_dir_names = ['build', '.']
 
 	" 在 linux/mac 下降低语法检查程序的进程优先级（不要卡到前台进程）
@@ -371,9 +365,11 @@ if index(g:bundle_group, 'ale') >= 0
 	let g:airline#extensions#ale#enabled = 1
 
 	" 编辑不同文件类型需要的语法检查器
+	" ccls need g++ support feature c++14 
+	" need .ccls_root for cpp project root find
 	let g:ale_linters = {
-				\ 'c': ['gcc', 'cppcheck'], 
-				\ 'cpp': ['gcc', 'cppcheck'], 
+				\ 'c': ['/opt/rh/devtoolset-7/root/usr/bin/gcc', 'ccls'],   
+				\ 'cpp': ['/opt/rh/devtoolset-7/root/usr/bin/g++', 'ccls'], 
 				\ 'python': ['flake8', 'pylint'], 
 				\ 'lua': ['luac'], 
 				\ 'go': ['go build', 'gofmt'],
@@ -403,11 +399,6 @@ if index(g:bundle_group, 'ale') >= 0
 
 	let g:ale_linters.text = ['textlint', 'write-good', 'languagetool']
 
-	" 如果没有 gcc 只有 clang 时（FreeBSD）
-	if executable('gcc') == 0 && executable('clang')
-		let g:ale_linters.c += ['clang']
-		let g:ale_linters.cpp += ['clang']
-	endif
 endif
 
 
@@ -420,7 +411,6 @@ if index(g:bundle_group, 'echodoc') >= 0
 	let g:echodoc#enable_at_startup = 1
 endif
 
-
 "----------------------------------------------------------------------
 " LeaderF：CtrlP / FZF 的超级代替者，文件模糊匹配，tags/函数名 选择
 "----------------------------------------------------------------------
@@ -432,20 +422,20 @@ if index(g:bundle_group, 'leaderf') >= 0
 		" CTRL+p 打开文件模糊匹配
 		let g:Lf_ShortcutF = '<c-p>'
 
+		" CTRL+n 打开最近使用的文件 MRU，进行模糊匹配
+		noremap <leader>rf :Leaderf mru --regexMode<cr>
+
 		" ALT+n 打开 buffer 模糊匹配
 		let g:Lf_ShortcutB = '<m-n>'
 
 		" CTRL+n 打开最近使用的文件 MRU，进行模糊匹配
-		noremap <c-n> :LeaderfMru<cr>
+		noremap <leader>rf :Leaderf mru --regexMode<cr>
 
-		" ALT+p 打开函数列表，按 i 进入模糊匹配，ESC 退出
-		noremap <m-p> :LeaderfFunction!<cr>
-
-		" ALT+SHIFT+p 打开 tag 列表，i 进入模糊匹配，ESC退出
-		noremap <m-P> :LeaderfBufTag!<cr>
-
-		" ALT+n 打开 buffer 列表进行模糊匹配
-		noremap <m-n> :LeaderfBuffer<cr>
+		"noremap <leader>fr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
+		"Alt+p 打开函数列表，按 i 进入模糊匹配，ESC 退出
+		noremap <c-P> :LeaderfFunction!<cr>
+		" ALT+p 打开 tag 列表，i 进入模糊匹配，ESC退出
+		noremap <m-p> :LeaderfBufTag!<cr>
 
 		" ALT+m 全局 tags 模糊匹配
 		noremap <m-m> :LeaderfTag<cr>
@@ -463,21 +453,24 @@ if index(g:bundle_group, 'leaderf') >= 0
 		let g:Lf_CacheDirectory = expand('~/.vim/cache')
 
 		" 显示绝对路径
-		let g:Lf_ShowRelativePath = 0
+		let g:Lf_ShowRelativePath = 1
 
 		" 隐藏帮助
 		let g:Lf_HideHelp = 1
 
+		let g:Lf_UseVersionControlTool = 0
 		" 模糊匹配忽略扩展名
 		let g:Lf_WildIgnore = {
-					\ 'dir': ['.svn','.git','.hg'],
+					\ 'dir': ['.svn','.git', '.hg', '.ccls_cache'],
 					\ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
 					\ }
 
 		" MRU 文件忽略扩展名
-		let g:Lf_MruFileExclude = ['*.so', '*.exe', '*.py[co]', '*.sw?', '~$*', '*.bak', '*.tmp', '*.dll']
+		let g:Lf_MruFileExclude = ['*.so', '.o', '*.exe', '*.py[co]', '*.sw?', '~$*', '*.bak', '*.tmp', '*.dll']
 		let g:Lf_StlColorscheme = 'powerline'
 
+		"let g:Lf_WindowPosition = 'popup'
+		let g:Lf_PreviewInPopup = 1
 		" 禁用 function/buftag 的预览功能，可以手动用 p 预览
 		let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 
@@ -490,7 +483,6 @@ if index(g:bundle_group, 'leaderf') >= 0
 				\ "BufTag": [["<ESC>", ':exec g:Lf_py "bufTagExplManager.quit()"<cr>']],
 				\ "Function": [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<cr>']],
 				\ }
-
 	else
 		" 不支持 python ，使用 CtrlP 代替
 		Plug 'ctrlpvim/ctrlp.vim'
@@ -526,7 +518,6 @@ if index(g:bundle_group, 'leaderf') >= 0
 	endif
 endif
 
-
 Plug 'skywind3000/vim-quickui'
 
 Plug 'skywind3000/asyncrun.vim'
@@ -538,9 +529,6 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'liwangmj/vim-switchtoinc'
 
 Plug 'luochen1990/rainbow'
-
-"注释的时候自动加个空格, 强迫症必配
-let g:NERDSpaceDelims=1
 
 "----------------------------------------------------------------------
 " 结束插件安装
@@ -561,90 +549,86 @@ let g:rainbow_load_separately = [
 let g:rainbow_guifgs = ['RoyalBlue3', 'DarkOrange3', 'DarkOrchid3', 'FireBrick']
 let g:rainbow_ctermfgs = ['lightblue', 'lightgreen', 'yellow', 'red', 'magenta']
 
+if index(g:bundle_group, 'ycm') >= 0
+	" 禁用预览功能：扰乱视听
+	let g:ycm_add_preview_to_completeopt = 0
 
-"----------------------------------------------------------------------
-" YouCompleteMe 默认设置：YCM 需要你另外手动编译安装
-"----------------------------------------------------------------------
+	" 禁用诊断功能：我们用前面更好用的 ALE 代替
+	let g:ycm_show_diagnostics_ui = 0
+	let g:ycm_server_log_level = 'info'
+	let g:ycm_min_num_identifier_candidate_chars = 2
+	let g:ycm_collect_identifiers_from_comments_and_strings = 1
+	let g:ycm_complete_in_strings=1
+	let g:ycm_key_invoke_completion = '<c-z>'
+	set completeopt=menu,menuone,noselect
+	let g:ycm_confirm_extra_conf = 0
+	"noremap <c-z> <NOP>
 
-" 禁用预览功能：扰乱视听
-let g:ycm_add_preview_to_completeopt = 0
+	" 两个字符自动触发语义补全
+	let g:ycm_semantic_triggers =  {
+				\ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+				\ 'cs,lua,javascript': ['re!\w{2}'],
+				\ }
 
-" 禁用诊断功能：我们用前面更好用的 ALE 代替
-let g:ycm_show_diagnostics_ui = 0
-let g:ycm_server_log_level = 'info'
-let g:ycm_min_num_identifier_candidate_chars = 2
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_complete_in_strings=1
-let g:ycm_key_invoke_completion = '<c-z>'
-set completeopt=menu,menuone,noselect
-let g:ycm_confirm_extra_conf = 0
-"noremap <c-z> <NOP>
-
-" 两个字符自动触发语义补全
-let g:ycm_semantic_triggers =  {
-			\ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
-			\ 'cs,lua,javascript': ['re!\w{2}'],
-			\ }
-
-
-"----------------------------------------------------------------------
-" Ycm 白名单（非名单内文件不启用 YCM），避免打开个 1MB 的 txt 分析半天
-"----------------------------------------------------------------------
-let g:ycm_filetype_whitelist = { 
-			\ "c":1,
-			\ "cpp":1, 
-			\ "cc":1, 
-			\ "objc":1,
-			\ "objcpp":1,
-			\ "python":1,
-			\ "java":1,
-			\ "javascript":1,
-			\ "coffee":1,
-			\ "vim":1, 
-			\ "go":1,
-			\ "cs":1,
-			\ "lua":1,
-			\ "perl":1,
-			\ "perl6":1,
-			\ "php":1,
-			\ "ruby":1,
-			\ "rust":1,
-			\ "erlang":1,
-			\ "asm":1,
-			\ "nasm":1,
-			\ "masm":1,
-			\ "tasm":1,
-			\ "asm68k":1,
-			\ "asmh8300":1,
-			\ "asciidoc":1,
-			\ "basic":1,
-			\ "vb":1,
-			\ "make":1,
-			\ "cmake":1,
-			\ "html":1,
-			\ "css":1,
-			\ "less":1,
-			\ "json":1,
-			\ "cson":1,
-			\ "typedscript":1,
-			\ "haskell":1,
-			\ "lhaskell":1,
-			\ "lisp":1,
-			\ "scheme":1,
-			\ "sdl":1,
-			\ "sh":1,
-			\ "zsh":1,
-			\ "bash":1,
-			\ "man":1,
-			\ "markdown":1,
-			\ "matlab":1,
-			\ "maxima":1,
-			\ "dosini":1,
-			\ "conf":1,
-			\ "config":1,
-			\ "zimbu":1,
-			\ "ps1":1,
-			\ }
+	"----------------------------------------------------------------------
+	" Ycm 白名单（非名单内文件不启用 YCM），避免打开个 1MB 的 txt 分析半天
+	"----------------------------------------------------------------------
+	let g:ycm_filetype_whitelist = { 
+				\ "c":1,
+				\ "cpp":1, 
+				\ "cc":1, 
+				\ "objc":1,
+				\ "objcpp":1,
+				\ "python":1,
+				\ "java":1,
+				\ "javascript":1,
+				\ "coffee":1,
+				\ "vim":1, 
+				\ "go":1,
+				\ "cs":1,
+				\ "lua":1,
+				\ "perl":1,
+				\ "perl6":1,
+				\ "php":1,
+				\ "ruby":1,
+				\ "rust":1,
+				\ "erlang":1,
+				\ "asm":1,
+				\ "nasm":1,
+				\ "masm":1,
+				\ "tasm":1,
+				\ "asm68k":1,
+				\ "asmh8300":1,
+				\ "asciidoc":1,
+				\ "basic":1,
+				\ "vb":1,
+				\ "make":1,
+				\ "cmake":1,
+				\ "html":1,
+				\ "css":1,
+				\ "less":1,
+				\ "json":1,
+				\ "cson":1,
+				\ "typedscript":1,
+				\ "haskell":1,
+				\ "lhaskell":1,
+				\ "lisp":1,
+				\ "scheme":1,
+				\ "sdl":1,
+				\ "sh":1,
+				\ "zsh":1,
+				\ "bash":1,
+				\ "man":1,
+				\ "markdown":1,
+				\ "matlab":1,
+				\ "maxima":1,
+				\ "dosini":1,
+				\ "conf":1,
+				\ "config":1,
+				\ "zimbu":1,
+				\ "ps1":1,
+				\ }
+endif
 
 if index(g:bundle_group, 'neomake') >= 0
 	" When writing a buffer (no delay).
