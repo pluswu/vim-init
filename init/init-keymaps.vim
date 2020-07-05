@@ -366,7 +366,6 @@ endif
 " 保存当前文件
 nmap <C-S> :w! <cr>
 
-let g:quickui_color_scheme = 'gruvbox'
 " 安装一个 File 目录，使用 [名称，命令] 的格式表示各个选项。
 call quickui#menu#install('&File', [
             \ ["&Open File", 'call feedkeys(":tabe ")' ],
@@ -422,9 +421,6 @@ call quickui#menu#install('&Edit', [
 			\ [ "UnComment\t\\cu", '', 'Uncomments the selected line(s)'],
             \ ], 'auto')
 
-nmap <leader>pf :call quickui#tools#list_function()<CR>
-nmap <leader>pt :call quickui#tools#preview_tag('')<cr>
-
 "符号相关|查找|跳转|预览
 call quickui#menu#install('&Symbol', [
 			\ [ "&Grep Word(Project)\tF2", '', 'asyn grep cur symbol in cur project not quickfix windows'],
@@ -474,7 +470,6 @@ if (index(g:bundle_group, 'tags')) >= 0
 	"Find current word in ctags database	
 	noremap <silent> <leader>gz :GscopeFind z <C-R><C-W><cr>
 
-
 	function! MenuHelp_Gscope(what)
 		let p = asyncrun#get_root('%')
 		let t = ''
@@ -505,17 +500,24 @@ if (index(g:bundle_group, 'tags')) >= 0
 	endfunc
 
 	"提供基于 TAGS 的定义预览，函数参数预览，quickfix 预览
-	noremap <m-u> :PreviewScroll -1<cr>
 	noremap <m-d> :PreviewScroll +1<cr>
+	noremap <m-u> :PreviewScroll -1<cr>
 	inoremap <m-u> <c-\><c-o>:PreviewScroll -1<cr>
 	inoremap <m-d> <c-\><c-o>:PreviewScroll +1<cr>
+
 	autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
 	autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
 
-	noremap <F4> :PreviewSignature!<cr>
+	nmap <leader>pt :call quickui#tools#preview_tag('')<cr>
+	nmap <leader>pu :call quickui#preview#scroll(-5)<cr>
+	nmap <leader>pd :call quickui#preview#scroll(5)<cr>
+
+	noremap <F4> :PreviewSignature!<cr
 	inoremap <F4> <c-\><c-o>:PreviewSignature!<cr>
 
 	call quickui#menu#install('&Symbol', [
+			\ [ "Preview FunctionList\t\\pf", 'LeaderfFunction!'],
+			\ [ "Preview TagDef\t\\pt", 'call quickui#tools#preview_tag("")'],
             \ [ "&TagBar\t\\tt", 'TagbarToggle'],
 			\ [ "--", ''],
 			\ [ "PviewSignature(GNU)\tF4", 'PreviewSignature!', 'GNU Global search s definition'],
@@ -617,3 +619,8 @@ let g:quickui_show_tip = 1
 "定义按两次空格就打开上面的目录
 noremap <space><space> :call quickui#menu#open()<cr>
 vmap <space><space> :call quickui#menu#open()<cr>
+
+nnoremap <silent>K :call quickui#tools#clever_context('k', g:context_menu_k, {})<cr>
+if has('gui_running') || has('nvim')
+	noremap <c-f10> :call MenuHelp_TaskList()<cr>
+endif

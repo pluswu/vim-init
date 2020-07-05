@@ -435,8 +435,8 @@ if index(g:bundle_group, 'leaderf') >= 0
 		noremap <leader>rf :Leaderf mru --regexMode<cr>
 
 		"noremap <leader>fr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
-		"Alt+p 打开函数列表，按 i 进入模糊匹配，ESC 退出
-		noremap <m-P> :LeaderfFunction!<cr>
+		"Alt+f 打开函数列表，按 i 进入模糊匹配，ESC 退出
+		noremap <leader>pf :LeaderfFunction!<cr>
 		" ALT+p 打开 tag 列表，i 进入模糊匹配，ESC退出
 		noremap <m-p> :LeaderfBufTag!<cr>
 
@@ -472,7 +472,7 @@ if index(g:bundle_group, 'leaderf') >= 0
 		let g:Lf_MruFileExclude = ['*.so', '.o', '*.exe', '*.py[co]', '*.sw?', '~$*', '*.bak', '*.tmp', '*.dll']
 		let g:Lf_StlColorscheme = 'powerline'
 
-		"let g:Lf_WindowPosition = 'popup'
+		let g:Lf_WindowPosition = 'popup'
 		let g:Lf_PreviewInPopup = 1
 		" 禁用 function/buftag 的预览功能，可以手动用 p 预览
 		let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
@@ -487,9 +487,15 @@ if index(g:bundle_group, 'leaderf') >= 0
 				\ "Function": [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<cr>']],
 				\ }
 
-		"let g:Lf_GtagsAutoGenerate = 1
-		"let g:Lf_Gtagslabel = 'native-pygments'
-		"let g:Lf_Gtagsconf = '/data/home/pluswu/.vim/vim-init/.globalrc'
+		"noremap <leader>fr :<C-U><C-R>=printf("Leaderf gtags -r %s", expand("<cword>"))<CR><CR>
+		"noremap <leader>fd :<C-U><C-R>=printf("Leaderf gtags -d %s", expand("<cword>"))<CR><CR>
+		"noremap <leader>fo :<C-U><C-R>=printf("Leaderf gtags --recall %s", "")<CR><CR>
+		"noremap <leader>fn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
+		"noremap <leader>fp :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
+
+		let g:Lf_GtagsAutoGenerate = 1
+		let g:Lf_Gtagslabel = 'native-pygments'
+		let g:Lf_Gtagsconf = '/data/home/pluswu/.vim/vim-init/.globalrc'
 	else
 		" 不支持 python ，使用 CtrlP 代替
 		Plug 'ctrlpvim/ctrlp.vim'
