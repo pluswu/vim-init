@@ -379,6 +379,9 @@ call quickui#menu#install('&File', [
             \ ["Save &As", 'call feedkeys(":saveas ")'],
             \ ["Save All", 'wa', ''],
             \ ["--", '' ],
+            \ ["Rename", 'call feedkeys(":Rename")', ''],
+            \ ["Delete", 'call feedkeys(":Delete")', ''],
+            \ ["--", '' ],
             \ ["E&xit\tAlt+X", 'q'],
             \ ])
 
@@ -405,7 +408,6 @@ call quickui#menu#install('&View', [
             \ ["View &Quickfix\tF10", 'call asyncrun#quickfix_toggle(6)'],
             \ ["View &NERDTreeR\tSpace+nn", 'NERDTree', 'file tree expand base project_root'],
             \ ["View NERDTreeC\tSpace+nc", 'NERDTree', 'file tree expand cwd'],
-            \ ["View TagBar\ttt", 'TagbarToggle'],
             \ ["View &BufferList\tAlt+P", 'call quickui#tools#list_buffer("e")'],
             \ ["--", ''],
             \ ["Window &Split\tsp", 'call feedkeys(":sp")'],
@@ -413,7 +415,7 @@ call quickui#menu#install('&View', [
             \ ["WindowH+\tres", 'res +5'],
             \ ["WindowH-\tres", 'res -5'],
             \ ["WindowW+\tvert res", 'vertical resize +5'],
-            \ ["WindowW-\tvert res", 'vertical resize +5'],
+            \ ["WindowW-\tvert res", 'vertical resize -5'],
             \ ])
 
 call quickui#menu#install('&Edit', [
@@ -539,13 +541,13 @@ if index(g:bundle_group, 'ycm') >= 0
 endif
 
 "版本管理相关p4/git
-"call quickui#menu#install('SC&M', [
-"            \ [ 'P4Ssync', 'call TerminalToggle()', '' ],
-"            \ [ 'P4Resolve', '', '' ],
-"            \ [ 'P4Login', ''],
-"			\ ["--", '' ],
-"            \ [ 'GitDiff', ''],
-"            \ ], 'auto')
+call quickui#menu#install('SC&M', [
+			\ [ "view diff(svn/git)", 'call svnhelp#svn_diff("%")', 'show svn/git diff side by side, ]c, [c to jump between changes'],
+			\ [ "show log", 'call svnhelp#svn_log("%")', 'show svn/git diff in quickfix window, F10 to close/open quickfix'],
+			\ [ "file add", 'call svnhelp#svn_add("%")', 'add file to repository'],
+			\ [ 'compare file', 'call svnhelp#compare_ask_file()', 'use vertical diffsplit, compare current file to another (use filename)'],
+			\ [ 'compare buffer', 'call svnhelp#compare_ask_buffer()', 'use vertical diffsplit, compare current file to another (use buffer id)'],
+			\ ], 'auto')
 
 "终端
 call quickui#menu#install('&Terminal', [

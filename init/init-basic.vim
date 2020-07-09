@@ -157,6 +157,7 @@ set wildignore+=*.zip,*.7z,*.rar,*.gz,*.tar,*.gzip,*.bz2,*.tgz,*.xz    " MacOSX/
 set wildignore+=*DS_Store*,*.ipch
 set wildignore+=*.gem
 set wildignore+=*.ccls-cache/*,*/.ccls-cache/**
+set wildignore+=*/boost/**
 set wildignore+=*.png,*.jpg,*.gif,*.bmp,*.tga,*.pcx,*.ppm,*.img,*.iso
 set wildignore+=*.so,*.swp,*.zip,*/.Trash/**,*.pdf,*.dmg,*/.rbenv/**
 set wildignore+=*/.nx/**,*.app,*.git,.git

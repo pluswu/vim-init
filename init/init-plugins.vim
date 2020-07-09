@@ -16,9 +16,9 @@
 if !exists('g:bundle_group')
 	let g:bundle_group = ['basic', 'tags', 'enhanced', 'filetypes', 'textobj']
 	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'echodoc']
-	let g:bundle_group += ['ycm']
+	"let g:bundle_group += ['ycm']
 	let g:bundle_group += ['ale']
-	"let g:bundle_group += ['coc']
+	let g:bundle_group += ['coc']
 	"let g:bundle_group += ['neomake']
 	let g:bundle_group += ['leaderf']
 endif
@@ -96,7 +96,7 @@ augroup END
 if index(g:bundle_group, 'basic') >= 0
 
 	" 展示开始画面，显示最近编辑过的文件
-	Plug 'mhinz/vim-startify'
+	"Plug 'mhinz/vim-startify'
 
 	" 一次性安装一大堆 colorscheme
 	Plug 'flazz/vim-colorschemes'
@@ -105,10 +105,10 @@ if index(g:bundle_group, 'basic') >= 0
 	Plug 'xolox/vim-misc'
 
 	" 用于在侧边符号栏显示 marks （ma-mz 记录的位置）
-	Plug 'kshenoy/vim-signature'
+	"Plug 'kshenoy/vim-signature'
 
 	" 用于在侧边符号栏显示 git/svn/p4 的 diff
-	Plug 'mhinz/vim-signify'
+	"Plug 'mhinz/vim-signify'
 
 	" 根据 quickfix 中匹配到的错误信息，高亮对应文件的错误行
 	" 使用 :RemoveErrorMarkers 命令或者 <space>ha 清除错误
@@ -130,21 +130,21 @@ if index(g:bundle_group, 'basic') >= 0
 	Plug 'timakro/vim-searchant'
 
 	" 默认不显示 startify
-	let g:startify_disable_at_vimenter = 1
-	let g:startify_session_dir = '~/.vim/session'
+	"let g:startify_disable_at_vimenter = 1
+	"let g:startify_session_dir = '~/.vim/session'
 
 	" signify 调优
-	let g:signify_vcs_list = ['git', 'svn', 'p4']
-	let g:signify_sign_add               = '+'
-	let g:signify_sign_delete            = '_'
-	let g:signify_sign_delete_first_line = '‾'
-	let g:signify_sign_change            = '~'
-	let g:signify_sign_changedelete      = g:signify_sign_change
+	"let g:signify_vcs_list = ['git', 'svn', 'p4']
+	"let g:signify_sign_add               = '+'
+	"let g:signify_sign_delete            = '_'
+	"let g:signify_sign_delete_first_line = '‾'
+	"let g:signify_sign_change            = '~'
+	"let g:signify_sign_changedelete      = g:signify_sign_change
 
 	" git 仓库使用 histogram 算法进行 diff
-	let g:signify_vcs_cmds = {
-			\ 'git': 'git diff --no-color --diff-algorithm=histogram --no-ext-diff -U0 -- %f',
-			\}
+	"let g:signify_vcs_cmds = {
+	"		\ 'git': 'git diff --no-color --diff-algorithm=histogram --no-ext-diff -U0 -- %f',
+	"		\}
 
 endif
 
@@ -153,6 +153,8 @@ endif
 " 增强插件
 "----------------------------------------------------------------------
 if index(g:bundle_group, 'enhanced') >= 0
+	"删除/重命名文件
+	Plug 'tpope/vim-eunuch'
 
 	" 用 v 选中一个区域后，ALT_+/- 按分隔符扩大/缩小选区
 	Plug 'terryma/vim-expand-region'
@@ -191,7 +193,7 @@ if index(g:bundle_group, 'tags') >= 0
 	" 提供 ctags/gtags 后台数据库自动更新功能
 	Plug 'ludovicchabant/vim-gutentags'
 
-	Plug 'majutsushi/tagbar'
+	"Plug 'majutsushi/tagbar'
 
 	" 提供 GscopeFind 命令并自动处理好 gtags 数据库切换
 	" 支持光标移动到符号名上：<leader>gg 查看定义，<leader>gs 查看引用
@@ -206,8 +208,6 @@ if index(g:bundle_group, 'tags') >= 0
 
 	" 默认禁用自动生成
 	let g:gutentags_modules = [] 
-
-	" 如果有 ctags 可执行就允许动态生成 ctags 文件
 	if executable('ctags')
 		let g:gutentags_modules += ['ctags']
 	endif
@@ -226,7 +226,7 @@ if index(g:bundle_group, 'tags') >= 0
 	let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--c-kinds=+px', '--c++-kinds=+px']
 
 	"for universal-ctags
-	"let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+	let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
 
 	" 禁止 gutentags 自动链接 gtags 数据库
 	let g:gutentags_auto_add_gtags_cscope = 0
@@ -235,6 +235,156 @@ endif
 
 if index(g:bundle_group, 'coc') >= 0
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}	
+
+	" TextEdit might fail if hidden is not set.
+	set hidden
+
+	" Some servers have issues with backup files, see #649.
+	set nobackup
+	set nowritebackup
+
+	" Give more space for displaying messages.
+	set cmdheight=2
+
+	" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+	" delays and poor user experience.
+	set updatetime=300
+
+	" Don't pass messages to |ins-completion-menu|.
+	set shortmess+=c
+
+	" Always show the signcolumn, otherwise it would shift the text each time
+	" diagnostics appear/become resolved.
+	if has("patch-8.1.1564")
+		" Recently vim can merge signcolumn and number column into one
+		set signcolumn=number
+	else
+		set signcolumn=yes
+	endif
+
+	" Use tab for trigger completion with characters ahead and navigate.
+	" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+	" other plugin before putting this into your config.
+	inoremap <silent><expr> <TAB>
+				\ pumvisible() ? "\<C-n>" :
+				\ <SID>check_back_space() ? "\<TAB>" :
+				\ coc#refresh()
+	inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+	function! s:check_back_space() abort
+		let col = col('.') - 1
+		return !col || getline('.')[col - 1]  =~# '\s'
+	endfunction
+
+	" Use <c-space> to trigger completion.
+	inoremap <silent><expr> <c-space> coc#refresh()
+
+	" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+	" position. Coc only does snippet and additional edit on confirm.
+	" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
+	if exists('*complete_info')
+		inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+	else
+		inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+	endif
+
+	" Use `[g` and `]g` to navigate diagnostics
+	" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+	nmap <silent> [g <Plug>(coc-diagnostic-prev)
+	nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+	" GoTo code navigation.
+	nmap <silent> cd <Plug>(coc-definition)
+	nmap <silent> cy <Plug>(coc-type-definition)
+	nmap <silent> ci <Plug>(coc-implementation)
+	nmap <silent> cr <Plug>(coc-references)
+
+	" Use K to show documentation in preview window.
+	nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+	function! s:show_documentation()
+		if (index(['vim','help'], &filetype) >= 0)
+			execute 'h '.expand('<cword>')
+		else
+			call CocAction('doHover')
+		endif
+	endfunction
+
+	" Highlight the symbol and its references when holding the cursor.
+	autocmd CursorHold * silent call CocActionAsync('highlight')
+
+	" Symbol renaming.
+	nmap <leader>rn <Plug>(coc-rename)
+
+	" Formatting selected code.
+	xmap <leader>f  <Plug>(coc-format-selected)
+	nmap <leader>f  <Plug>(coc-format-selected)
+
+	augroup mygroup
+		autocmd!
+		" Setup formatexpr specified filetype(s).
+		autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+		" Update signature help on jump placeholder.
+		autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+	augroup end
+
+	" Applying codeAction to the selected region.
+	" Example: `<leader>aap` for current paragraph
+	xmap <leader>a  <Plug>(coc-codeaction-selected)
+	nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+	" Remap keys for applying codeAction to the current buffer.
+	nmap <leader>ac  <Plug>(coc-codeaction)
+	" Apply AutoFix to problem on the current line.
+	nmap <leader>qf  <Plug>(coc-fix-current)
+
+	" Map function and class text objects
+	" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+	xmap if <Plug>(coc-funcobj-i)
+	omap if <Plug>(coc-funcobj-i)
+	xmap af <Plug>(coc-funcobj-a)
+	omap af <Plug>(coc-funcobj-a)
+	xmap ic <Plug>(coc-classobj-i)
+	omap ic <Plug>(coc-classobj-i)
+	xmap ac <Plug>(coc-classobj-a)
+	omap ac <Plug>(coc-classobj-a)
+
+	" Use CTRL-S for selections ranges.
+	" Requires 'textDocument/selectionRange' support of LS, ex: coc-tsserver
+	"nmap <silent> <C-s> <Plug>(coc-range-select)
+	"xmap <silent> <C-s> <Plug>(coc-range-select)
+
+	" Add `:Format` command to format current buffer.
+	command! -nargs=0 Format :call CocAction('format')
+
+	" Add `:Fold` command to fold current buffer.
+	command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+	" Add `:OR` command for organize imports of the current buffer.
+	command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+	" Add (Neo)Vim's native statusline support.
+	" NOTE: Please see `:h coc-status` for integrations with external plugins that
+	" provide custom statusline: lightline.vim, vim-airline.
+	set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+	" Mappings for CoCList
+	" Show all diagnostics.
+	"nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+	" Manage extensions.
+	"nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+	" Show commands.
+	"nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+	" Find symbol of current document.
+	"nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+	" Search workspace symbols.
+	"nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+	" Do default action for next item.
+	"nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+	" Do default action for previous item.
+	"nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+	" Resume latest coc list.
+	"nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 endif
 
 
@@ -382,6 +532,13 @@ if index(g:bundle_group, 'ale') >= 0
 				\ 'java': ['javac'],
 				\ 'javascript': ['eslint'], 
 				\ }
+	let g:ale_c_ccls_init_options = {
+				\ 'cache' : {'directory':'/tmp/ccls-cache'}
+				\}	
+
+	let g:ale_cpp_ccls_init_options = {
+				\ 'cache' : {'directory':'/tmp/ccls-cache'}
+				\}	
 
 	" 获取 pylint, flake8 的配置文件，在 vim-init/tools/conf 下面
 	function s:lintcfg(name)
@@ -411,7 +568,7 @@ endif
 "----------------------------------------------------------------------
 " echodoc：搭配 YCM/deoplete 在底部显示函数参数
 "----------------------------------------------------------------------
-if index(g:bundle_group, 'echodoc') >= 0
+if index(g:bundle_group, 'ycm') >= 0
 	Plug 'Shougo/echodoc.vim'
 	set noshowmode
 	let g:echodoc#enable_at_startup = 1
@@ -489,12 +646,6 @@ if index(g:bundle_group, 'leaderf') >= 0
 				\ "BufTag": [["<ESC>", ':exec g:Lf_py "bufTagExplManager.quit()"<cr>']],
 				\ "Function": [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<cr>']],
 				\ }
-
-		"noremap <leader>fr :<C-U><C-R>=printf("Leaderf gtags -r %s", expand("<cword>"))<CR><CR>
-		"noremap <leader>fd :<C-U><C-R>=printf("Leaderf gtags -d %s", expand("<cword>"))<CR><CR>
-		"noremap <leader>fo :<C-U><C-R>=printf("Leaderf gtags --recall %s", "")<CR><CR>
-		"noremap <leader>fn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
-		"noremap <leader>fp :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
 
 		let g:Lf_GtagsAutoGenerate = 1
 		let g:Lf_Gtagslabel = 'native-pygments'
