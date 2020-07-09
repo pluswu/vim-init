@@ -15,7 +15,9 @@
 "----------------------------------------------------------------------
 if !exists('g:bundle_group')
 	let g:bundle_group = ['basic', 'tags', 'enhanced', 'filetypes', 'textobj']
-	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'echodoc']
+	let g:bundle_group += ['tags', 'airline', 'echodoc']
+	let g:bundle_group += ['nerdtree']
+	"let g:bundle_group += ['defex']
 	"let g:bundle_group += ['ycm']
 	let g:bundle_group += ['ale']
 	let g:bundle_group += ['coc']
@@ -57,8 +59,6 @@ Plug 'godlygeek/tabular', { 'on': 'Tabularize' }
 " Diff 增强，支持 histogram / patience 等更科学的 diff 算法
 Plug 'chrisbra/vim-diff-enhanced'
 
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer',  'for': ['c', 'cpp'] }
-
 "----------------------------------------------------------------------
 " Dirvish 设置：自动排序并隐藏文件，同时定位到相关文件
 " 这个排序函数可以将目录排在前面，文件排在后面，并且按照字母顺序排序
@@ -96,7 +96,7 @@ augroup END
 if index(g:bundle_group, 'basic') >= 0
 
 	" 展示开始画面，显示最近编辑过的文件
-	"Plug 'mhinz/vim-startify'
+	Plug 'mhinz/vim-startify'
 
 	" 一次性安装一大堆 colorscheme
 	Plug 'flazz/vim-colorschemes'
@@ -105,10 +105,10 @@ if index(g:bundle_group, 'basic') >= 0
 	Plug 'xolox/vim-misc'
 
 	" 用于在侧边符号栏显示 marks （ma-mz 记录的位置）
-	"Plug 'kshenoy/vim-signature'
+	Plug 'kshenoy/vim-signature'
 
 	" 用于在侧边符号栏显示 git/svn/p4 的 diff
-	"Plug 'mhinz/vim-signify'
+	Plug 'mhinz/vim-signify'
 
 	" 根据 quickfix 中匹配到的错误信息，高亮对应文件的错误行
 	" 使用 :RemoveErrorMarkers 命令或者 <space>ha 清除错误
@@ -130,21 +130,21 @@ if index(g:bundle_group, 'basic') >= 0
 	Plug 'timakro/vim-searchant'
 
 	" 默认不显示 startify
-	"let g:startify_disable_at_vimenter = 1
-	"let g:startify_session_dir = '~/.vim/session'
+	let g:startify_disable_at_vimenter = 1
+	let g:startify_session_dir = '~/.vim/session'
 
-	" signify 调优
-	"let g:signify_vcs_list = ['git', 'svn', 'p4']
-	"let g:signify_sign_add               = '+'
-	"let g:signify_sign_delete            = '_'
-	"let g:signify_sign_delete_first_line = '‾'
-	"let g:signify_sign_change            = '~'
-	"let g:signify_sign_changedelete      = g:signify_sign_change
+	"signify 调优
+	let g:signify_vcs_list = ['git', 'svn', 'p4']
+	let g:signify_sign_add               = '+'
+	let g:signify_sign_delete            = '_'
+	let g:signify_sign_delete_first_line = '‾'
+	let g:signify_sign_change            = '~'
+	let g:signify_sign_changedelete      = g:signify_sign_change
 
-	" git 仓库使用 histogram 算法进行 diff
-	"let g:signify_vcs_cmds = {
-	"		\ 'git': 'git diff --no-color --diff-algorithm=histogram --no-ext-diff -U0 -- %f',
-	"		\}
+	"git 仓库使用 histogram 算法进行 diff
+	let g:signify_vcs_cmds = {
+			\ 'git': 'git diff --no-color --diff-algorithm=histogram --no-ext-diff -U0 -- %f',
+			\}
 
 endif
 
@@ -486,9 +486,9 @@ endif
 "----------------------------------------------------------------------
 " YouCompleteMe 默认设置：YCM 需要你另外手动编译安装
 "----------------------------------------------------------------------
-if index(g:bundle_group, 'ycm') >= 0
-	Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer',  'for': ['c', 'cpp'] }
-endif
+"if index(g:bundle_group, 'ycm') >= 0
+	"Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer',  'for': ['c', 'cpp'] }
+"endif
 
 "----------------------------------------------------------------------
 " ale：动态语法检查
@@ -568,7 +568,7 @@ endif
 "----------------------------------------------------------------------
 " echodoc：搭配 YCM/deoplete 在底部显示函数参数
 "----------------------------------------------------------------------
-if index(g:bundle_group, 'ycm') >= 0
+if index(g:bundle_group, 'echodoc') >= 0
 	Plug 'Shougo/echodoc.vim'
 	set noshowmode
 	let g:echodoc#enable_at_startup = 1

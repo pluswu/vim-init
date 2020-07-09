@@ -387,12 +387,6 @@ call quickui#menu#install('&File', [
 
 "设置 F10 打开/关闭 Quickfix 窗口
 nmap <F10> :call asyncrun#quickfix_toggle(6)<cr>
-
-if index(g:bundle_group, 'nerdtree') >= 0
-	noremap <space>nn :NERDTreeToggle<cr>
-	noremap <space>nc :NERDTree %<cr>
-endif
-
 "窗口/Buffer/Tab相关的选项
 call quickui#menu#install('&View', [
             \ ["TabChoose\tAlt+E", 'ChooseWin'],
@@ -406,8 +400,27 @@ call quickui#menu#install('&View', [
             \ ['TabMove&R', 'call Tab_MoveRight()'],
             \ ["--", ''],
             \ ["View &Quickfix\tF10", 'call asyncrun#quickfix_toggle(6)'],
+			\ ])
+ 
+
+if index(g:bundle_group, 'nerdtree') >= 0
+	noremap <space>nn :NERDTreeToggle<cr>
+	noremap <space>nc :NERDTree %<cr>
+	"窗口/Buffer/Tab相关的选项
+	call quickui#menu#install('&View', [
             \ ["View &NERDTreeR\tSpace+nn", 'NERDTree', 'file tree expand base project_root'],
             \ ["View NERDTreeC\tSpace+nc", 'NERDTree', 'file tree expand cwd'],
+			\ ])
+endif
+
+if index(g:bundle_group, 'defex') >= 0
+	call quickui#menu#install('&View', [
+            \ ["View &NERDTreeR\tSpace+nn", 'Defex', 'file tree expand base project_root'],
+			\ ])
+endif
+
+"窗口/Buffer/Tab相关的选项
+call quickui#menu#install('&View', [
             \ ["View &BufferList\tAlt+P", 'call quickui#tools#list_buffer("e")'],
             \ ["--", ''],
             \ ["Window &Split\tsp", 'call feedkeys(":sp")'],
