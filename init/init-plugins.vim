@@ -126,6 +126,12 @@ if index(g:bundle_group, 'basic') >= 0
 	" 代码模板
 	Plug 'SirVer/ultisnips'
 
+if index(g:bundle_group, 'coc') >= 0
+	"禁止UltilSnip的tab自动补齐 这样coc才能使用
+	let g:UltiSnipsExpandTrigger = "<m_ttttt>"
+endif
+
+
 	"搜索高亮
 	Plug 'timakro/vim-searchant'
 
@@ -180,6 +186,8 @@ if index(g:bundle_group, 'enhanced') >= 0
 	" ALT_+/- 用于按分隔符扩大缩小 v 选区
 	map <m-=> <Plug>(expand_region_expand)
 	map <m--> <Plug>(expand_region_shrink)
+
+	Plug 'honza/vim-snippets'
 endif
 
 
@@ -200,7 +208,7 @@ if index(g:bundle_group, 'tags') >= 0
 	Plug 'skywind3000/gutentags_plus'
 
 	" 设定项目目录标志：除了 .git/.svn 外，还有 .root 文件
-	let g:gutentags_project_root = ['.root']
+	let g:gutentags_project_root = ['.root', 'compile_commands.json']
 	let g:gutentags_ctags_tagfile = '.tags'
 
 	" 默认生成的数据文件集中到 ~/.cache/tags 避免污染项目目录，好清理
@@ -262,6 +270,21 @@ if index(g:bundle_group, 'coc') >= 0
 		set signcolumn=yes
 	endif
 
+	" Use <C-l> for trigger snippet expand.
+	imap <C-l> <Plug>(coc-snippets-expand)
+
+	" Use <C-j> for select text for visual placeholder of snippet.
+	vmap <C-j> <Plug>(coc-snippets-select)
+	
+	" " Use <C-j> for jump to next placeholder, it's default of coc.nvim
+	 let g:coc_snippet_next = '<c-j>'
+	
+	" " Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+	 let g:coc_snippet_prev = '<c-k>'
+	
+	" Use <C-j> for both expand and jump (make expand higher priority.)
+	 imap <C-j> <Plug>(coc-snippets-expand-jump)
+
 	" Use tab for trigger completion with characters ahead and navigate.
 	" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 	" other plugin before putting this into your config.
@@ -278,6 +301,7 @@ if index(g:bundle_group, 'coc') >= 0
 
 	" Use <c-space> to trigger completion.
 	inoremap <silent><expr> <c-space> coc#refresh()
+	
 
 	" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
 	" position. Coc only does snippet and additional edit on confirm.
@@ -287,11 +311,11 @@ if index(g:bundle_group, 'coc') >= 0
 	else
 		inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 	endif
+	
 
 	" Use `[g` and `]g` to navigate diagnostics
 	" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-	nmap <silent> [g <Plug>(coc-diagnostic-prev)
-	nmap <silent> ]g <Plug>(coc-diagnostic-next)
+	"nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 	" GoTo code navigation.
 	nmap <silent> cd <Plug>(coc-definition)
@@ -300,7 +324,7 @@ if index(g:bundle_group, 'coc') >= 0
 	nmap <silent> cr <Plug>(coc-references)
 
 	" Use K to show documentation in preview window.
-	nnoremap <silent> K :call <SID>show_documentation()<CR>
+	"nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 	function! s:show_documentation()
 		if (index(['vim','help'], &filetype) >= 0)
@@ -310,44 +334,44 @@ if index(g:bundle_group, 'coc') >= 0
 		endif
 	endfunction
 
-	" Highlight the symbol and its references when holding the cursor.
-	autocmd CursorHold * silent call CocActionAsync('highlight')
+	"Highlight the symbol and its references when holding the cursor.
+	"autocmd CursorHold * silent call CocActionAsync('highlight')
 
 	" Symbol renaming.
-	nmap <leader>rn <Plug>(coc-rename)
+	"nmap <leader>rn <Plug>(coc-rename)
 
 	" Formatting selected code.
-	xmap <leader>f  <Plug>(coc-format-selected)
-	nmap <leader>f  <Plug>(coc-format-selected)
+	"xmap <leader>f  <Plug>(coc-format-selected)
+	"nmap <leader>f  <Plug>(coc-format-selected)
 
 	augroup mygroup
 		autocmd!
 		" Setup formatexpr specified filetype(s).
 		autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
 		" Update signature help on jump placeholder.
-		autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+		"autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 	augroup end
 
 	" Applying codeAction to the selected region.
 	" Example: `<leader>aap` for current paragraph
-	xmap <leader>a  <Plug>(coc-codeaction-selected)
-	nmap <leader>a  <Plug>(coc-codeaction-selected)
+	"xmap <leader>a  <Plug>(coc-codeaction-selected)
+	"nmap <leader>a  <Plug>(coc-codeaction-selected)
 
 	" Remap keys for applying codeAction to the current buffer.
-	nmap <leader>ac  <Plug>(coc-codeaction)
+	"nmap <leader>ac  <Plug>(coc-codeaction)
 	" Apply AutoFix to problem on the current line.
-	nmap <leader>qf  <Plug>(coc-fix-current)
+	"nmap <leader>qf  <Plug>(coc-fix-current)
 
 	" Map function and class text objects
 	" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-	xmap if <Plug>(coc-funcobj-i)
-	omap if <Plug>(coc-funcobj-i)
-	xmap af <Plug>(coc-funcobj-a)
-	omap af <Plug>(coc-funcobj-a)
-	xmap ic <Plug>(coc-classobj-i)
-	omap ic <Plug>(coc-classobj-i)
-	xmap ac <Plug>(coc-classobj-a)
-	omap ac <Plug>(coc-classobj-a)
+	"xmap if <Plug>(coc-funcobj-i)
+	"omap if <Plug>(coc-funcobj-i)
+	"xmap af <Plug>(coc-funcobj-a)
+	"omap af <Plug>(coc-funcobj-a)
+	"xmap ic <Plug>(coc-classobj-i)
+	"omap ic <Plug>(coc-classobj-i)
+	"xmap ac <Plug>(coc-classobj-a)
+	"omap ac <Plug>(coc-classobj-a)
 
 	" Use CTRL-S for selections ranges.
 	" Requires 'textDocument/selectionRange' support of LS, ex: coc-tsserver
@@ -355,18 +379,18 @@ if index(g:bundle_group, 'coc') >= 0
 	"xmap <silent> <C-s> <Plug>(coc-range-select)
 
 	" Add `:Format` command to format current buffer.
-	command! -nargs=0 Format :call CocAction('format')
+	" command! -nargs=0 Format :call CocAction('format')
 
 	" Add `:Fold` command to fold current buffer.
-	command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+	" command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 
 	" Add `:OR` command for organize imports of the current buffer.
-	command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+	"command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
 
 	" Add (Neo)Vim's native statusline support.
 	" NOTE: Please see `:h coc-status` for integrations with external plugins that
 	" provide custom statusline: lightline.vim, vim-airline.
-	set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+	"set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 	" Mappings for CoCList
 	" Show all diagnostics.
@@ -533,11 +557,11 @@ if index(g:bundle_group, 'ale') >= 0
 				\ 'javascript': ['eslint'], 
 				\ }
 	let g:ale_c_ccls_init_options = {
-				\ 'cache' : {'directory':'/tmp/ccls-cache'}
+				\ 'cache' : {'directory':'/tmp/ccls_ale_cache'}
 				\}	
 
 	let g:ale_cpp_ccls_init_options = {
-				\ 'cache' : {'directory':'/tmp/ccls-cache'}
+				\ 'cache' : {'directory':'/tmp/ccls_ale_cache'}
 				\}	
 
 	" 获取 pylint, flake8 的配置文件，在 vim-init/tools/conf 下面
@@ -569,9 +593,9 @@ endif
 " echodoc：搭配 YCM/deoplete 在底部显示函数参数
 "----------------------------------------------------------------------
 if index(g:bundle_group, 'echodoc') >= 0
-	Plug 'Shougo/echodoc.vim'
-	set noshowmode
-	let g:echodoc#enable_at_startup = 1
+	"Plug 'Shougo/echodoc.vim'
+	"set noshowmode
+	"let g:echodoc#enable_at_startup = 1
 endif
 
 "----------------------------------------------------------------------
@@ -610,7 +634,7 @@ if index(g:bundle_group, 'leaderf') >= 0
 		let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
 
 		" 如何识别项目目录，从当前文件目录向父目录递归知道碰到下面的文件/目录
-		let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
+		let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git', 'compile_commands.json']
 		let g:Lf_WorkingDirectoryMode = 'Ac'
 		let g:Lf_WindowHeight = 0.30
 		let g:Lf_CacheDirectory = expand('~/.vim/cache')

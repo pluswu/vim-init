@@ -22,7 +22,7 @@
 inoremap <c-a> <home>
 inoremap <c-e> <end>
 inoremap <c-d> <del>
-inoremap <c-_> <c-k> 
+inoremap <c-_> <c-k>
 
 "ecs
 inoremap jk <ESC>
@@ -419,9 +419,11 @@ if index(g:bundle_group, 'defex') >= 0
 			\ ])
 endif
 
+nmap <leader>bl : call quickui#tools#list_buffer("e")<cr>
+
 "窗口/Buffer/Tab相关的选项
 call quickui#menu#install('&View', [
-            \ ["View &BufferList\tAlt+P", 'call quickui#tools#list_buffer("e")'],
+			\ ["View &BufferList\t\\bl", 'call quickui#tools#list_buffer("e")'],
             \ ["--", ''],
             \ ["Window &Split\tsp", 'call feedkeys(":sp")'],
             \ ["Window Split&V\tvsp", 'call feedkeys(":vsp")'],
@@ -639,3 +641,5 @@ nnoremap <silent>K :call quickui#tools#clever_context('k', g:context_menu_k, {})
 if has('gui_running') || has('nvim')
 	noremap <c-f10> :call MenuHelp_TaskList()<cr>
 endif
+
+cnoremap <expr> %% getcmdtype() == ':' ? asyncrun#get_root(expand("<cfile>")) : '%%'
