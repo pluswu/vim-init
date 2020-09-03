@@ -215,7 +215,7 @@ if index(g:bundle_group, 'tags') >= 0
 	let g:gutentags_cache_dir = expand('~/.cache/tags')
 
 	" 默认禁用自动生成
-	let g:gutentags_modules = [] 
+	let g:gutentags_modules = []
 	if executable('ctags')
 		let g:gutentags_modules += ['ctags']
 	endif
@@ -316,6 +316,8 @@ if index(g:bundle_group, 'coc') >= 0
 	" Use `[g` and `]g` to navigate diagnostics
 	" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
 	"nmap <silent> ]g <Plug>(coc-diagnostic-next)
+	let g:coc_user_config = {}
+	let g:coc_user_config['coc.preferences.jumpCommand'] = ':vsplit'
 
 	" GoTo code navigation.
 	nmap <silent> cd <Plug>(coc-definition)
@@ -409,6 +411,19 @@ if index(g:bundle_group, 'coc') >= 0
 	"nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 	" Resume latest coc list.
 	"nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+	
+	 let g:coc_global_extensions = [
+	              \ "coc-explorer",
+	              \ "coc-lists",
+	              \ "coc-vimlsp",
+	              \ "coc-python",
+	              \ "coc-tasks",
+	              \ "coc-yank",
+	              \ "coc-json",
+	              \ "coc-vimtex",
+	              \ "coc-html",
+	              \ "coc-css",
+	              \ "coc-tsserver"]
 endif
 
 
@@ -671,9 +686,9 @@ if index(g:bundle_group, 'leaderf') >= 0
 				\ "Function": [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<cr>']],
 				\ }
 
-		let g:Lf_GtagsAutoGenerate = 1
-		let g:Lf_Gtagslabel = 'native-pygments'
-		let g:Lf_Gtagsconf = '/data/home/pluswu/.vim/vim-init/.globalrc'
+		"let g:Lf_GtagsAutoGenerate = 1
+		"let g:Lf_Gtagslabel = 'native-pygments'
+		"let g:Lf_Gtagsconf = '/data/home/pluswu/.vim/vim-init/.globalrc'
 	else
 		" 不支持 python ，使用 CtrlP 代替
 		Plug 'ctrlpvim/ctrlp.vim'
