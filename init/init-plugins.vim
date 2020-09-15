@@ -213,6 +213,12 @@ if index(g:bundle_group, 'tags') >= 0
 
 	" 默认生成的数据文件集中到 ~/.cache/tags 避免污染项目目录，好清理
 	let g:gutentags_cache_dir = expand('~/.cache/tags')
+	
+	"只针对固定文件才生成tags 部分文件类型gungtags生成会导致crash
+	let g:gutentags_enabled = 0
+	augroup auto_gutentags
+		au FileType python,java,shell,vim,c,c++,php,erlang,javascript,rust,go,lua,ruby,json,typescript let g:gutentags_enabled=1
+	augroup end
 
 	" 默认禁用自动生成
 	let g:gutentags_modules = []
@@ -226,6 +232,8 @@ if index(g:bundle_group, 'tags') >= 0
 	endif
 
 	let $GTAGSLABEL = 'native-pygments'
+
+	"let $GTAGSLABEL = 'native'
 	let $GTAGSCONF = '/data/home/pluswu/.vim/vim-init/.globalrc'
 
 	let g:gutentags_define_advanced_commands = 1
@@ -572,11 +580,11 @@ if index(g:bundle_group, 'ale') >= 0
 				\ 'javascript': ['eslint'], 
 				\ }
 	let g:ale_c_ccls_init_options = {
-				\ 'cache' : {'directory':'/tmp/ccls_ale_cache'}
+				\ 'cache' : {'directory':'/data/home/pluswu/.ccls_cache/ccls_ale_cache'}
 				\}	
 
 	let g:ale_cpp_ccls_init_options = {
-				\ 'cache' : {'directory':'/tmp/ccls_ale_cache'}
+				\ 'cache' : {'directory':'/data/home/pluswu/.ccls_cache/ccls_ale_cache'}
 				\}	
 
 	" 获取 pylint, flake8 的配置文件，在 vim-init/tools/conf 下面
@@ -686,9 +694,10 @@ if index(g:bundle_group, 'leaderf') >= 0
 				\ "Function": [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<cr>']],
 				\ }
 
-		"let g:Lf_GtagsAutoGenerate = 1
-		"let g:Lf_Gtagslabel = 'native-pygments'
-		"let g:Lf_Gtagsconf = '/data/home/pluswu/.vim/vim-init/.globalrc'
+		let g:Lf_GtagsAutoGenerate = 1
+		"let g:Lf_Gtagslabel = 'native'
+		let g:Lf_Gtagslabel = 'native-pygments'
+		let g:Lf_Gtagsconf = '/data/home/pluswu/.vim/vim-init/.globalrc'
 	else
 		" 不支持 python ，使用 CtrlP 代替
 		Plug 'ctrlpvim/ctrlp.vim'
