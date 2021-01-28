@@ -208,11 +208,11 @@ if index(g:bundle_group, 'tags') >= 0
 	Plug 'skywind3000/gutentags_plus'
 
 	" 设定项目目录标志：除了 .git/.svn 外，还有 .root 文件
-	let g:gutentags_project_root = ['.root', 'compile_commands.json']
+	let g:gutentags_project_root = ['.root', '.ccls', '.git', '.svn', 'compile_commands.json']
 	let g:gutentags_ctags_tagfile = '.tags'
 
 	" 默认生成的数据文件集中到 ~/.cache/tags 避免污染项目目录，好清理
-	let g:gutentags_cache_dir = expand('~/.cache/tags')
+	let g:gutentags_cache_dir = expand('~/.vimcache/tags')
 	
 	"只针对固定文件才生成tags 部分文件类型gungtags生成会导致crash
 	let g:gutentags_enabled = 0
@@ -250,7 +250,8 @@ if index(g:bundle_group, 'tags') >= 0
 endif
 
 if index(g:bundle_group, 'coc') >= 0
-	Plug 'neoclide/coc.nvim', {'branch': 'release'}	
+
+	Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 
 	" TextEdit might fail if hidden is not set.
 	set hidden
@@ -462,6 +463,7 @@ if index(g:bundle_group, 'textobj') >= 0
 	Plug 'jceb/vim-textobj-uri'
 endif
 
+Plug 'rust-lang/rust.vim'
 
 "----------------------------------------------------------------------
 " 文件类型扩展
@@ -660,7 +662,7 @@ if index(g:bundle_group, 'leaderf') >= 0
 		let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git', 'compile_commands.json']
 		let g:Lf_WorkingDirectoryMode = 'Ac'
 		let g:Lf_WindowHeight = 0.30
-		let g:Lf_CacheDirectory = expand('~/.vim/cache')
+		let g:Lf_CacheDirectory = expand('~/.vim/leaderf_cache')
 
 		" 显示绝对路径
 		let g:Lf_ShowRelativePath = 1
@@ -716,7 +718,7 @@ if index(g:bundle_group, 'leaderf') >= 0
 		  \ }
 
 		" 项目标志
-		let g:ctrlp_root_markers = ['.project', '.root', '.svn', '.git']
+		let g:ctrlp_root_markers = ['.project', '.root', '.svn', '.git', '.ccls', '.project']
 		let g:ctrlp_working_path = 0
 
 		" CTRL+p 打开文件模糊匹配
