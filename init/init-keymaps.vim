@@ -265,12 +265,6 @@ nnoremap <silent> <F7> :AsyncRun -cwd=<root> make <cr>
 nnoremap <silent> <F7> :AsyncRun -cwd=<root> cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .<cr>
 
 
-
-
-
-
-
-
 "vim终端打开与关闭
 let g:terminal_key = '<m-t>'
 
@@ -413,12 +407,6 @@ if index(g:bundle_group, 'nerdtree') >= 0
 			\ ])
 endif
 
-if index(g:bundle_group, 'defex') >= 0
-	call quickui#menu#install('&View', [
-            \ ["View &NERDTreeR\tSpace+nn", 'Defex', 'file tree expand base project_root'],
-			\ ])
-endif
-
 nmap <leader>bl : call quickui#tools#list_buffer("e")<cr>
 
 "窗口/Buffer/Tab相关的选项
@@ -452,6 +440,23 @@ if (index(g:bundle_group, 'Leaderf'))
             \ [ "Find &Tag GFuzzy(Leaderf)\tAlt+M", 'LeaderfTag', 'find tag reg fuzzy for project global'],
 			\ ], 'auto')
 endif
+
+if (index(g:bundle_group, 'coc'))
+	call quickui#menu#install('&Symbol', [
+			\ [ "coc-Definition \tgd", ''],
+            \ [ "coc-T&ype-definition \tgy", ''],
+            \ [ "coc-&Implementation \tgi", ''],
+            \ [ "coc-&References \tgr", ''],
+			\ ], 'auto')
+
+	" GoTo code navigation.
+	"nmap <silent> gd <Plug>(coc-definition)
+	"nmap <silent> gy <Plug>(coc-type-definition)
+	"nmap <silent> gi <Plug>(coc-implementation)
+	"nmap <silent> gr <Plug>(coc-references)
+
+endif
+
 
 if (index(g:bundle_group, 'tags')) >= 0
 	nmap <leader>tt :TagbarToggle<CR>
@@ -533,9 +538,8 @@ if (index(g:bundle_group, 'tags')) >= 0
 	inoremap <F4> <c-\><c-o>:PreviewSignature!<cr>
 
 	call quickui#menu#install('&Symbol', [
-			\ [ "Preview FunctionList\t\\pf", 'LeaderfFunction!'],
-			\ [ "Preview TagDef\t\\pt", 'call quickui#tools#preview_tag("")'],
-            \ [ "&TagBar\t\\tt", 'TagbarToggle'],
+			\ [ "Preview &FunctionList\t\\pf", 'LeaderfFunction!'],
+			\ [ "Preview &TagDef\t\\pt", 'call quickui#tools#preview_tag("")'],
 			\ [ "--", ''],
 			\ [ "PviewSignature(GNU)\tF4", 'PreviewSignature!', 'GNU Global search s definition'],
 			\ [ "Find &Definition(GNU)\t\\gg", 'call MenuHelp_Gscope("g")', 'GNU Global search s definition'],
