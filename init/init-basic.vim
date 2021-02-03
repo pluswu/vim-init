@@ -145,6 +145,8 @@ if has('folding')
 	set foldlevel=99
 endif
 
+au! BufNewFile,BufRead *.pb.cc, *.pb.h setf cpp
+
 
 "----------------------------------------------------------------------
 " 文件搜索和补全时忽略下面扩展名
